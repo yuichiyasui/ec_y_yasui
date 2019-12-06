@@ -1,7 +1,12 @@
-package com.noodle;
+package com.noodle.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.noodle.service.ShowItemDetailService;
+import com.noodle.service.ShowItemListService;
 
 /**
  * 各ページへ遷移するコントローラークラス.
@@ -11,13 +16,29 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 public class ShowPageController {
 
+	@Autowired
+	private ShowItemListService showItemListService;
+	@Autowired
+	private ShowItemDetailService showItemDetailService;
+	
 	/**
 	 * 商品一覧画面に遷移するメソッド.
 	 * @return 商品一覧画面
 	 */
 	@RequestMapping("")
-	public String showItemList() {
+	public String showItemList(Model model) {
+		model.addAttribute("itemList", showItemListService.showItemList());
 		return "item_list.html";
+	}
+
+	/**
+	 * 商品詳細画面に遷移するメソッド.
+	 * @return 商品詳細画面
+	 */
+	@RequestMapping("/showItemDetail")
+	public String showItemDetail(Integer id, Model model) {
+		model.addAttribute("item", showItemDetailService.showItemDetail(id));
+		return "item_detail.html";
 	}
 	
 	/**
@@ -38,14 +59,6 @@ public class ShowPageController {
 		return "register_user.html";
 	}
 	
-	/**
-	 * 商品詳細画面に遷移するメソッド.
-	 * @return 商品詳細画面
-	 */
-	@RequestMapping("/showItemDetail")
-	public String showItemDetail() {
-		return "item_detail.html";
-	}
 	
 	/**
 	 * ショッピングカート画面に遷移するメソッド.
