@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+	<!-- Spring Bootのデフォルトのlogback設定をインクルード -->
+	<include
+		resource="org/springframework/boot/logging/logback/base.xml" />
+
+	<root>
+		<level value="INFO" /><!-- DEBUGやにするとDEBUGランク以上のログが送られるため、起動が遅くなる。 -->
+		<!-- ↑どうしても解決できない問題が発生した場合のみDEBUGランク以上情報を送信する -->
+	</root>
+</configuration>

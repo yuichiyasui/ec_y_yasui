@@ -1404,9 +1404,11 @@ pre code {
 }
 .container-fluid {
   padding-right: 15px;
-  padding-left: 15px;
+  padding-left: 10px;
+  padding-bottom: 10px;
   margin-right: auto;
   margin-left: auto;
+  background-color: black;
 }
 .row {
   margin-right: -15px;
@@ -3833,7 +3835,6 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
 }
 @media (min-width: 768px) {
   .navbar {
-    border-radius: 4px;
   }
 }
 @media (min-width: 768px) {
@@ -3901,6 +3902,7 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
   .container-fluid > .navbar-collapse {
     margin-right: 0;
     margin-left: 0;
+    margin-top: -7px;
   }
 }
 .navbar-static-top {
@@ -4148,6 +4150,7 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
   }
   .navbar-right {
     float: right !important;
+    margin-top: 25px;
     margin-right: -15px;
   }
   .navbar-right ~ .navbar-right {
@@ -4167,10 +4170,10 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
   background-color: transparent;
 }
 .navbar-default .navbar-text {
-  color: #777;
+  color: white;
 }
 .navbar-default .navbar-nav > li > a {
-  color: #777;
+  color: white;
 }
 .navbar-default .navbar-nav > li > a:hover,
 .navbar-default .navbar-nav > li > a:focus {
@@ -4232,7 +4235,7 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
   }
 }
 .navbar-default .navbar-link {
-  color: #777;
+  color: white;
 }
 .navbar-default .navbar-link:hover {
   color: #333;
@@ -6322,4 +6325,12 @@ button.close {
   .hidden-print {
     display: none !important;
   }
+}
+header {
+    background-color:black;
+    margin: -1px -1px 0 -1px;
+}
+#logo{
+	width:220px;
+	height:52px;
 }

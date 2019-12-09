@@ -16,9 +16,17 @@ public class User {
 	private String password;
 	/**	郵便番号 */
 	private String zipcode;
+	/**	住所 */
+	private String address;
 	/**	電話番号 */
 	private String telephone;
 
+	public String getAddress() {
+		return address;
+	}
+	public void setAddress(String address) {
+		this.address = address;
+	}
 	public Integer getId() {
 		return id;
 	}
@@ -58,6 +66,7 @@ public class User {
 	@Override
 	public String toString() {
 		return "User [id=" + id + ", name=" + name + ", email=" + email + ", password=" + password + ", zipcode="
-				+ zipcode + ", telephone=" + telephone + "]";
+				+ zipcode + ", address=" + address + ", telephone=" + telephone + "]";
 	}
+	
 }
