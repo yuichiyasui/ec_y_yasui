@@ -12,6 +12,9 @@
 	<groupId>com.example</groupId>
 	<artifactId>ec_y_yasui</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+
+<!-- 	<packaging>war</packaging> -->
+	
 	<name>ec_y_yasui</name>
 	<description>Demo project for Spring Boot</description>
 
@@ -20,6 +23,12 @@
 	</properties>
 
 	<dependencies>
+	 <!-- 変更2. jarの依存関係を追加する -->
+<!--     <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-tomcat</artifactId>
+      <scope>provided</scope>
+    </dependency> -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-jdbc</artifactId>
@@ -60,6 +69,18 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-mail</artifactId>
 		</dependency> -->
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-web</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-config</artifactId>
+		</dependency>
 	</dependencies>
 
 	<build>

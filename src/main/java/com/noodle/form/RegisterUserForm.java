@@ -2,35 +2,42 @@ package com.noodle.form;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 
 /**
  * register_user.htmlからパラメータを受け取るフォームクラス.
+ * 
  * @author yuichi
  *
  */
 public class RegisterUserForm {
-	/**	ユーザー名 */
-	@NotBlank(message="名前は入力必須です")
+	/** ユーザー名 */
+	@NotBlank(message = "*名前の入力は必須です")
 	private String name;
-	/**	メールアドレス */
-	@Email(message="メールアドレスの形式が不正です")
+	/** メールアドレス */
+	@NotBlank(message = "*メールアドレスを入力して下さい")
+	@Email(message = "*メールアドレスの形式が不正です")
 	private String email;
-	/**	郵便番号 */
-	@NotBlank(message="郵便番号の入力は必須です")
+	/** 郵便番号 */
+	@NotBlank(message = "*郵便番号の入力は必須です")
+	@Pattern(regexp = "^\\d{3}\\-?\\d{4}$", message = "*郵便番号の形式が不正です")
 	private String zipcode;
-	/**	住所 */
-	@NotBlank(message="住所の入力は必須です")
+	/** 住所 */
+	@NotBlank(message = "*住所の入力は必須です")
 	private String address;
-	/**	電話番号 */
-	@NotBlank(message="電話番号の入力は必須です")
+	/** 電話番号 */
+	@Pattern(regexp = "^[0-9]*$", message = "*半角数字で入力してください")
+	@NotBlank(message = "*電話番号を入力して下さい")
 	private String telephone;
-	/**	パスワード */
-	@NotBlank(message="パスワードの入力は必須です")
+	/** パスワード */
+	// 英大文字・小文字+数字+記号の4種を含む8桁以上
+	@Pattern(regexp = "^(?=.*?[a-z])(?=.*?[A-Z])(?=.*?[0-9])(?=.*[!\\x22\\#$%&@'()*+,\\-./_])[A-Za-z0-9!\\x22\\#$%&@'()*+,\\-./_]{8,}$", message = "*パスワードは英大文字・小文字、数字、記号の4種を含む8桁以上で設定してください")
+	@NotBlank(message = "*パスワードの入力は必須です")
 	private String password;
-	/**	確認用パスワード */
-	@NotBlank(message="確認用パスワードの入力は必須です")
+	/** 確認用パスワード */
+	@NotBlank(message = "*確認用パスワードの入力は必須です")
 	private String confirmationPassword;
-	
+
 	public String getName() {
 		return name;
 	}

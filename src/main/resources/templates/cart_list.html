@@ -54,6 +54,8 @@
 			<div
 				class="table-responsive col-lg-offset-1 col-lg-10 col-md-offset-1 col-md-10 col-sm-10 col-xs-12">
 				<h3 class="text-center">ショッピングカート</h3>
+				<h4 class="text-center"><span th:if="${message}" th:text="${message}">エラーメッセージ</span></h4>
+				<div th:if="${order}">
 				<table class="table table-striped">
 					<tbody>
 						<tr>
@@ -80,120 +82,84 @@
 							<th>
 							</th>
 						</tr>
-						<tr>
+						<tr th:each="orderItem:${order.orderItemList}">
 							<td>
 								<div class="center">
-									<img src="img/1.jpg"
+									<img th:src="@{'/img/' + ${orderItem.item.imagePath}}"
 										class="img-responsive img-rounded" width="100" height="300"><br>
-									じゃがバターベーコン
+									<span th:text="${orderItem.item.name}">商品名</span>
 								</div>
 							</td>
 							<td>
-								<span class="price">&nbsp;Ｌ</span>&nbsp;&nbsp;2,380円
-								&nbsp;&nbsp;1個
+								&nbsp;<span class="price" th:text="${orderItem.size}">サイズ</span>
+								&nbsp;&nbsp;<span th:if="${orderItem.size} == 'M'" th:text="${orderItem.item.priceM} + '円'">Mサイズ価格</span>
+								&nbsp;&nbsp;<span th:if="${orderItem.size} == 'L'" th:text="${orderItem.item.priceL} + '円'">Lサイズ価格</span>
+								&nbsp;&nbsp;<span th:text="${orderItem.quantity}">1</span>個
 							</td>
 							<td>
-								<ul>
-									<li>ピーマン300円</li>
-									<li>オニオン300円</li>
-									<li>あらびきソーセージ300円</li>
+								<ul th:each="orderTopping:${orderItem.orderToppingList}">
+									<li th:if="${orderTopping.id}">
+									<span th:text="${orderTopping.topping.name}">トッピング名</span>:
+									<span th:text="${orderTopping.topping.priceM}"></span>円</li>
 								</ul>
 							</td>
 							<td>
 								<div class="text-center">
-									3,280円
+									<span th:text="${orderItem.getSubTotal()} + '円'">3,280円</span>
 								</div>
 							</td>
 							<td>
 								<div class="text-center">
-									<button type="submit" class="btn btn-primary">削除</button>
+								<form th:action="@{/deleteCartItem}" method="post">
+								<input type="hidden" name="userId" th:value="${order.userId}">
+								<input type="hidden" name="orderItemId" th:value="${orderItem.id}">
+								<button type="submit" class="btn btn-primary">削除</button>
+								</form>
 								</div>
 							</td>
 						</tr>
-						<tr>
-							<td>
-								<div class="center">
-									<img src="img/1.jpg"
-										class="img-responsive img-rounded" width="100" height="300"><br>
-									じゃがバターベーコン
-								</div>
-							</td>
-							<td>
-								<span class="price">&nbsp;Ｌ</span>&nbsp;&nbsp;2,380円
-								&nbsp;&nbsp;1個
-							</td>
-							<td>
-								<ul>
-									<li>ピーマン300円</li>
-									<li>オニオン300円</li>
-									<li>あらびきソーセージ300円</li>
-								</ul>
-							</td>
-							<td>
-								<div class="text-center">
-									3,280円
-								</div>
-							</td>
-							<td>
-								<div class="text-center">
-									<button type="submit" class="btn btn-primary">削除</button>
-								</div>
-							</td>
-						</tr>
-						<tr>
-							<td>
-								<div class="center">
-									<img src="img/1.jpg"
-										class="img-responsive img-rounded" width="100" height="300"><br>
-									じゃがバターベーコン
-								</div>
-							</td>
-							<td>
-								<span class="price">&nbsp;Ｌ</span>&nbsp;&nbsp;2,380円
-								&nbsp;&nbsp;1個
-							</td>
-							<td>
-								<ul>
-									<li>ピーマン300円</li>
-									<li>オニオン300円</li>
-									<li>あらびきソーセージ300円</li>
-								</ul>
-							</td>
-							<td>
-								<div class="text-center">
-									3,280円
-								</div>
-							</td>
-							<td>
-								<div class="text-center">
-									<button type="submit" class="btn btn-primary">削除</button>
-								</div>
-							</td>
-						</tr>
+						
 					</tbody>
 				</table>
-			</div>
-		</div>
-
-		<div class="row">
-			<div class="col-xs-offset-2 col-xs-8">
-				<div class="form-group text-center">
-					<span id="total-price">消費税：8,000円</span><br>
-					<span id="total-price">ご注文金額合計：38,000円 (税込)</span>
 				</div>
 			</div>
 		</div>
 
+	<div th:if="${order}">
+		<div class="row">
+			<div class="col-xs-offset-2 col-xs-8">
+				<div class="form-group text-center">
+					<span id="total-price" th:text="'消費税：' + ${order.getTax()} + '円'">消費税</span><br>
+					<span id="total-price" th:text="'ご注文金額合計：' + ${order.getCalcTotalPrice() + order.getTax()} + '円 (税込)'">合計金額(税込)</span>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div th:if="${message}">
+			<div class="row">
+				<div class="col-xs-offset-4 col-xs-4">
+					<div class="form-group">
+						<a th:href="@{/}">
+							<input class="form-control btn btn-warning btn-block"
+								type="submit" value="商品一覧ページに戻る">
+						</a>
+					</div>
+				</div>
+			</div>
+	</div>
+	<div th:if="${order}">
 		<div class="row">
 			<div class="col-xs-offset-5 col-xs-3">
 				<div class="form-group">
-					<form th:action="@{/showOrderConfirm}">
+					<form th:action="@{/showOrderConfirm}" method="post">
+					<input type="hidden" name="userId" th:value="${order.userId}">
 						<input class="form-control btn btn-warning btn-block"
 							type="submit" value="注文に進む">
 					</form>
 				</div>
 			</div>
 		</div>
+	</div>
 	</div>
 	<!-- end container -->
 	<script

@@ -6,8 +6,13 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>ラーメンのデリバリーのらくらく軒</title>
+<script th:src="@{https://code.jquery.com/jquery-3.4.1.min.js}"></script>
+<script th:src="@{/js/item_detail.js}"></script>
 <link th:href="@{/css/bootstrap.css}" rel="stylesheet">
 <link th:href="@{/css/noodle.css}" rel="stylesheet">
+<script type="text/javascript">
+$('#price_M').number(true);
+</script>
 <!--[if lt IE 9]>
       <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
@@ -78,14 +83,14 @@
 								</div>
 								<div class="col-sm-12">
 									<label class="radio-inline">
-										<input type="radio"
+										<input class="size" type="radio"
 											name="size" value="M" checked="checked">
-										<span class="price">&nbsp;М&nbsp;</span>&nbsp;&nbsp;<span th:text="${item.priceM}">1,380</span>円(税抜)
+										<span class="price">&nbsp;М&nbsp;</span>&nbsp;&nbsp;<span id="price_M" th:text="${#numbers.formatInteger(item.priceM, 2, 'COMMA')}">1,380</span>円(税抜)
 									</label>
 									<label class="radio-inline">
-										<input type="radio"
+										<input class="size" type="radio"
 											name="size" value="L">
-										<span class="price">&nbsp;Ｌ</span>&nbsp;&nbsp;<span th:text="${item.priceL}">2,380</span>円(税抜)
+										<span class="price">&nbsp;Ｌ</span>&nbsp;&nbsp;<span id="price_L" th:text="${#numbers.formatInteger(item.priceL, 2, 'COMMA')}">2,380</span>円(税抜)
 									</label>
 								</div>
 							</div>
@@ -118,7 +123,7 @@
 							<div class="row">
 								<div class="col-xs-5 col-sm-5">
 									<label for="">数量:</label>
-									<select name="quantity" class="form-control">
+									<select id="quantity" name="quantity" class="form-control">
 										<option value="1">1</option>
 										<option value="2">2</option>
 										<option value="3">3</option>

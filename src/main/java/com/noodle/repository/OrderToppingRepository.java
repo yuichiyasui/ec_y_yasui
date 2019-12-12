@@ -31,5 +31,4 @@ public class OrderToppingRepository {
 				.addValue("order_item_id", orderTopping.getOrderItemId());
 		template.update(sql, param);
 	}
-	
 }

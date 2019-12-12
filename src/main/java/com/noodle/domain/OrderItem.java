@@ -29,16 +29,20 @@ public class OrderItem {
 	 */
 	public int getSubTotal() {
 		if(size == 'M') {
-			int totalPrice = (item.getPriceM() + (orderToppingList.size() * 200)) * quantity; 
-//			for(orderTopping : orderToppingList) {
-//				orderTopping.getTopping().getPriceM();
-//			}
-			// TODO orderToppingListの中のorderToppingの中のToppingの中の
-			return totalPrice;
+			// Mの場合
+			int toppingPrice = 0;
+			for( OrderTopping orderTopping : getOrderToppingList()) {
+				toppingPrice +=orderTopping.getTopping().getPriceM();
+			}
+			return (item.getPriceM() + toppingPrice) * quantity;
 		}else {
-			int totalPrice = (item.getPriceM() + (orderToppingList.size() * 300)) * quantity; 
-			return totalPrice;
-		}
+			// Lの場合
+			int toppingPrice = 0;
+			for( OrderTopping orderTopping : getOrderToppingList()) {
+				toppingPrice +=orderTopping.getTopping().getPriceL();
+			}
+			return (item.getPriceL() + toppingPrice) * quantity;			
+		}			
 	}
 	public Integer getId() {
 		return id;

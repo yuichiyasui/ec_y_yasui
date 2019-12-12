@@ -1,10 +1,20 @@
 <!DOCTYPE html>
 <html lang="ja" xmlns:th="http://thymeleaf.org">
 <head>
+<link rel="icon" type="image/x-icon" th:href="@{/img/favicon.ico}">
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>ラーメンのデリバリーのらくらく軒</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script src="https://ajaxzip3.github.io/ajaxzip3.js" charset="UTF-8"></script>
+<script>
+$(function() {
+    $('#searchAddress').click(function(){
+        AjaxZip3.zip2addr('zipcode', '', 'address', 'address');
+    });
+});
+</script>
 <link th:href="@{/css/bootstrap.css}" rel="stylesheet">
 <!--[if lt IE 9]>
       <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
@@ -53,16 +63,15 @@
 					<form method="post" th:action="@{/registerUser}" th:object="${registerUserForm}">
 						<fieldset>
 							<legend>ユーザ登録</legend>
-		<span th:errors="*{email}">エラーメッセージ</span>
-  		<span th:errors="*{name}">エラーメッセージ</span>
-		<span th:errors="*{zipcode}">エラーメッセージ</span>
-		<span th:errors="*{address}">エラーメッセージ</span>
-		<span th:errors="*{telephone}">エラーメッセージ</span>
-		<span th:errors="*{password}">エラーメッセージ</span>
-		<span th:errors="*{confirmationPassword}">エラーメッセージ</span>
+						  		<div th:errors="*{name}" style="color:red;">エラーメッセージ</div>
+								<div th:errors="*{email}" style="color:red;">エラーメッセージ</div>
+								<div th:errors="*{zipcode}" style="color:red;">エラーメッセージ</div>
+								<div th:errors="*{address}" style="color:red;">エラーメッセージ</div>
+								<div th:errors="*{telephone}" style="color:red;">エラーメッセージ</div>
+								<div th:errors="*{password}" style="color:red;">エラーメッセージ</div>
+								<div th:errors="*{confirmationPassword}" style="color:red;">エラーメッセージ</div>
 							<div class="form-group">
-								<label for="inputName">名前:</label>
-								
+								<label for="inputName">名前:</label>								
 								<input type="text" id="inputName" class="form-control"
 									placeholder="名前を入力してください" name="name" th:field="*{name}">
 							</div>
@@ -73,30 +82,33 @@
 							</div>
 							<div class="form-group">
 								<label for="inputZipcode">郵便番号:</label>
-									<input id="searchAddress" type="button" value="住所検索">
 								<input type="text" id="inputZipcode" class="form-control"
-									placeholder="郵便番号を入力してください" name="zipcode">
-								
+									placeholder="半角数字のみで郵便番号を入力してください (例)1234567" name="zipcode" th:field="*{zipcode}">
+									<input id="searchAddress" class="btn btn-primary" type="button" value="住所検索"
+									 style="margin-top:10px;">
 							</div>
 							<div class="form-group">
 								<label for="inputAddress">住所:</label>
 								<input type="text" id="inputAddress" class="form-control"
-									placeholder="住所を入力してください" name="address">
+									placeholder="住所を入力してください" name="address" th:field="*{address}">
 							</div>
 							<div class="form-group">
 								<label for="inputTel">電話番号:</label>
 								<input type="text" id="inputTel" class="form-control"
-									placeholder="電話番号を入力してください" name="telephone">
+									placeholder="半角数字のみで電話番号を入力してください (例)0312345678" name="telephone" th:field="*{telephone}">
 							</div>
 							<div class="form-group">
 								<label for="inputPassword">パスワード:</label>
 								<input type="text" id="inputPassword" class="form-control"
-									placeholder="パスワードを入力してください" name="password">
+									placeholder="パスワードを入力してください" name="password" th:field="*{password}">
+									<span style="font-size:8px;">【パスワード設定の注意事項】<br>
+								※　パスワードは英大文字・小文字、数字、記号の4種を含む8桁以上で設定してください。<br>
+								※　他社のサービスなどで用いているパスワードと同一のパスワードを設定しないでください。<br></span>
 							</div>
 							<div class="form-group">
 								<label for="inputConfirmationPassword">確認用パスワード:</label>
 								<input type="text" id="inputConfirmationPassword" class="form-control"
-									placeholder="確認用パスワードを入力してください">
+									placeholder="パスワードを再度入力してください" name="confirmationPassword" th:field="*{confirmationPassword}">
 							</div>
 							<div class="form-group">
 								<button type="submit" class="btn btn-primary">登録</button>

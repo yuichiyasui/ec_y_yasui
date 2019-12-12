@@ -48,6 +48,19 @@ public class OrderItemRepository {
 	}
 
 	/**
+	 * 主キー検索を行うメソッド.
+	 * @param id 注文商品ID
+	 * @return 注文商品情報
+	 */
+	public OrderItem load(Integer id) {
+		String sql = "SELECT id,item_id,order_id,quantity,size FROM order_items "
+				+ "WHERE id=:id";
+		SqlParameterSource param = new MapSqlParameterSource()
+				.addValue("id", id);
+		return template.queryForObject(sql, param, ORDER_ITEM_ROW_MAPPER);
+	}
+	
+	/**
 	 * 注文IDと商品IDで注文商品IDを取得するメソッド.
 	 * 1つの注文時に同じ商品が2つある場合はidの降順で先頭のidを取得する
 	 * @return 注文商品ID
@@ -59,5 +72,15 @@ public class OrderItemRepository {
 				.addValue("order_id", orderItem.getOrderId());
 		return template.query(sql, param, ORDER_ITEM_ROW_MAPPER).get(0).getId();
 	}
-
+	
+	/**
+	 * 注文商品IDで注文商品とそれに関連するトッピングを削除するメソッド.
+	 * @param id 注文商品ID
+	 */
+	public void deleteOrderItemAndOrderToppingById(Integer id) {
+		String sql ="WITH deleted AS (DELETE FROM order_items WHERE id = :id RETURNING id) "
+				+ "DELETE FROM order_toppings WHERE order_item_id IN (SELECT id FROM deleted)";
+		SqlParameterSource param = new MapSqlParameterSource().addValue("id", id);
+		template.update(sql, param);
+	}
 }

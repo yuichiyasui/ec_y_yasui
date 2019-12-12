@@ -1,8 +1,10 @@
 package com.noodle.repository;
 
 import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.jdbc.core.RowMapper;
+import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
@@ -19,18 +21,35 @@ public class UserRepository {
 	@Autowired
 	private NamedParameterJdbcTemplate template;
 	
-//  基本機能では必要ないためコメントアウト
-//	private final static RowMapper<User> USER_ROW_MAPPER = (rs,i)->{
-//		User user = new User();
-//		user.setId(rs.getInt("id"));
-//		user.setName(rs.getString("name"));
-//		user.setEmail(rs.getString("email"));
-//		user.setPassword(rs.getString("password"));
-//		user.setZipcode(rs.getString("zipcode"));
-//		user.setAddress(rs.getString("address"));
-//		user.setTelephone(rs.getString("telephone"));
-//		return user;
-//	};
+	private final static RowMapper<User> USER_ROW_MAPPER = (rs,i)->{
+		User user = new User();
+		user.setId(rs.getInt("id"));
+		user.setName(rs.getString("name"));
+		user.setEmail(rs.getString("email"));
+		user.setPassword(rs.getString("password"));
+		user.setZipcode(rs.getString("zipcode"));
+		user.setAddress(rs.getString("address"));
+		user.setTelephone(rs.getString("telephone"));
+		return user;
+	};
+	
+	/**
+	 * メールアドレスでユーザー情報を取得するメソッド.
+	 * @param email メールアドレス
+	 * @return ユーザー情報 / 存在しなければnullを返す
+	 */
+	public User findByEmail(String email) {
+		String sql = "SELECT id,name,email,password,zipcode,address,telephone "
+				+ "FROM users WHERE email=:email";
+		SqlParameterSource param = new MapSqlParameterSource()
+				.addValue("email", email);	
+		try {
+			return template.queryForObject(sql, param, USER_ROW_MAPPER);
+		} catch (DataAccessException e) {
+			e.printStackTrace();
+			return null;
+		}			
+	}
 	
 	/**
 	 * ユーザー情報をDBにINSERTするメソッド.

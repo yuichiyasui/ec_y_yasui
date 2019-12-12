@@ -46,9 +46,10 @@ public class AddToCartService {
 	
 	/**
 	 * オーダー情報を作成するメソッド.
-	 * @param form
+	 * @param form item_detail.htmlから受け取ったリクエストパラメータ
+	 * @return このオーダーのユーザーID
 	 */
-	public void addToCart(OrderItemForm form) {
+	public int addToCart(OrderItemForm form) {
 		// セッションIDを10進数に変換
 		BigInteger decSessionId = new BigInteger(session.getId(), 16);
 		// int型に変換(ハッシュコードに変換)
@@ -74,8 +75,8 @@ public class AddToCartService {
 		OrderItem orderItem = new OrderItem();
 		orderItem.setItemId(form.getItemId());
 		// 注文IDを取得してセット
-		orderItem.setOrderId
-		(orderRepository.findIdByUserIdAndStatus(order.getUserId()));
+		int orderId = orderRepository.findIdByUserIdAndStatus(order.getUserId());
+		orderItem.setOrderId(orderId);
 		orderItem.setQuantity(form.getQuantity());
 		orderItem.setSize(form.getSize());
 		orderItemRepository.insert(orderItem);
@@ -84,17 +85,19 @@ public class AddToCartService {
 		// OrderToppingオブジェクトを生成
 		OrderTopping orderTopping;
 		// OrderToppingListの中身があればINSERT
-		if(form.getOrderToppingList().size() != 0 ) {
+		if(form.getOrderToppingList() != null ) {
 			for(Integer toppingId : form.getOrderToppingList()) {
 				orderTopping = new OrderTopping();
 				orderTopping.setToppingId(toppingId);
 				// order_itemsテーブルから主キーをとってくる
-				orderTopping.setOrderItemId
-				(orderItemRepository.findIdByItemIdAndOrderId(orderItem));
+				int orderItemId = orderItemRepository.findIdByItemIdAndOrderId(orderItem);
+				orderTopping.setOrderItemId(orderItemId);
 				orderTopping.setTopping(toppingRepository.load(toppingId));
 				orderToppingRepository.insert(orderTopping);
 				LOGGER.info("注文トッピング情報をDBに追加しました");
 			}
 		}
+		return order.getUserId();
 	}
+	
 }

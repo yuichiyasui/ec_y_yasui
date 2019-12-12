@@ -80,13 +80,13 @@
 		<div class="row">
 			<div
 				class="table-responsive col-lg-offset-1 col-lg-10 col-md-offset-1 col-md-10 col-sm-10 col-xs-12">
-				<table class="table table-striped" th:each="item:${itemList}">
+				<table class="table table-striped">
 					<tbody>
-						<tr>
+						<tr class="col-lg-4" th:each="item:${itemList}">
 							<td>
 								<a th:href="@{'/showItemDetail/?id=' + ${item.id}}">
 									<img th:src="@{/img/} + ${item.imagePath}"
-										class="img-responsive img-rounded" width="200" height="600">
+										class="img-responsive img-rounded" width="200" height="143">
 								</a><br>
 								<a th:href="@{'/showItemDetail/?id=' + ${item.id}}"><span th:text="${item.name}">商品名</span></a><br>
 								<span class="price">&nbsp;М&nbsp;</span>&nbsp;&nbsp;<span th:text="${item.priceM}">1,380</span>円(税抜)<br>

@@ -44,16 +44,18 @@ public class Order {
 	 * @return 消費税
 	 */
 	public int getTax() {
-		int tax = (int)(totalPrice * 0.1);
+		int tax = (int)(getCalcTotalPrice() * 0.1);
 		return tax;
 	}
 	/**
 	 * 合計金額を計算するメソッド.
 	 * @return 合計金額
 	 */
-	public int getCalcTotalPrice() {		//TODO getCalcTotalPrice未完成
-//		for(orderItem : orderItemList) {		
-//		}
+	public int getCalcTotalPrice() {
+		totalPrice = 0;
+		for(OrderItem orderItem : getOrderItemList()) {	
+			totalPrice += orderItem.getSubTotal();
+		}
 		return totalPrice;
 	}	
 	public Integer getId() {

@@ -53,5 +53,4 @@ public class ToppingRepository {
 				.addValue("id", id);
 		return template.queryForObject(sql, param, TOPPING_ROW_MAPPER);
 	}
-	
 }

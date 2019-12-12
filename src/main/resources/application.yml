@@ -4,3 +4,6 @@ spring:
     url: jdbc:postgresql://localhost:5432/ec_y_yasui
     username: postgres
     password: postgres
+    
+#  jmx:
+#   enabled: false
