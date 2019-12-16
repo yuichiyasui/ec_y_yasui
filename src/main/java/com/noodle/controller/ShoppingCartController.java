@@ -42,14 +42,18 @@ public class ShoppingCartController {
 	 */
 	@RequestMapping("/addToCart")
 	public String addToCart(OrderItemForm form, Model model) {
-		model.addAttribute("order", showCartListService.showCartList
-				(addToCartService.addToCart(form)));
+		// 注文を作成して商品を追加して、作成した注文のユーザーIDを取得する
+		Integer userId = addToCartService.addToCart(form);
+		// ユーザーIDを基に注文情報を取得してリクエストスコープに格納する
+		model.addAttribute("order", showCartListService.showCartList(userId));
+		// ログインした際に、仮IDを基に注文情報を取得して本IDに書き換える為に
+		// セッションスコープに格納しておく 
+		session.setAttribute("preId", userId);
 		return "cart_list.html";
 	}
 	
 	/**
 	 * カートを表示するメソッド.
-	 * ※現状使ってない(引数はオーダーIDじゃなくてユーザーIDとステータスの方がいいかも)
 	 * @param userId ユーザーID
 	 * @param model リクエストスコープ
 	 * @return ショッピングカート画面

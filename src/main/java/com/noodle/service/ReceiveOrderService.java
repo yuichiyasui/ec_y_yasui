@@ -3,7 +3,6 @@ package com.noodle.service;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,6 +55,7 @@ public class ReceiveOrderService {
 		order.setDestinationEmail(form.getDestinationEmail());
 		order.setDestinationZipcode(form.getDestinationZipcode());
 		order.setDestinationAddress(form.getDestinationAddress());
+		order.setDestinationTel(form.getDestinationTel());
 		// String型のdeliveryDateをLocalDate型に変換
 		LocalDate dDate = LocalDate.parse(form.getDeliveryDate());
 		// LocalDate型をDeliveryTimeを追加してLocalDateTime型に変換
@@ -69,8 +69,4 @@ public class ReceiveOrderService {
 		orderRepository.update(order);
 	}
 	
-	public static LocalDateTime toLocalDateTime(String date, String format) {
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern(format);
-        return LocalDateTime.parse(date, dtf);
-    }
 }

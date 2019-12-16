@@ -187,6 +187,7 @@ public class OrderRepository {
 	
 	/**
 	 * 主キーで注文情報を取得するメソッド.
+	 * 利用されるクラス:
 	 * @param id 注文ID
 	 * @return 注文情報
 	 */
@@ -285,7 +286,22 @@ public class OrderRepository {
 	}
 	
 	/**
+	 * 注文情報のユーザーIDを仮IDから本IDに更新するメソッド.
+	 * 利用されるクラス:LoginService
+	 * @param userId 本ID
+	 * @param preId 仮ID
+	 */
+	public void updateOrdersUserId(Integer userId, Integer preId) {
+		String sql = "UPDATE orders SET user_id = :userId WHERE user_id = :preId";
+		SqlParameterSource param = new MapSqlParameterSource()
+				.addValue("userId", userId)
+				.addValue("preId", preId);
+		template.update(sql, param);
+	}
+	
+	/**
 	 * 受け取った注文情報を基にordersテーブルの注文情報を更新するメソッド.
+	 * 利用されるクラス:ReceiveOrderService
 	 * @param order 注文情報
 	 */
 	public void update(Order order) {
@@ -299,7 +315,7 @@ public class OrderRepository {
 		SqlParameterSource param = new MapSqlParameterSource()
 				.addValue("id", order.getId())
 				.addValue("status", order.getStatus())
-				.addValue("total_price", order.getCalcTotalPrice())
+				.addValue("total_price", order.getCalcTotalPrice()+order.getTax())
 				.addValue("order_date", order.getOrderDate())
 				.addValue("destination_name", order.getDestinationName())
 				.addValue("destination_email", order.getDestinationEmail())
