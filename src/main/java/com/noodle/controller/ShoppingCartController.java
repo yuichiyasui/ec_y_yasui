@@ -41,9 +41,9 @@ public class ShoppingCartController {
 	 * @return ショッピングカート画面
 	 */
 	@RequestMapping("/addToCart")
-	public String addToCart(OrderItemForm form) {
+	public String addToCart(OrderItemForm form, @AuthenticationPrincipal LoginUser loginUser) {
 		// 注文を作成して商品を追加して、作成した注文のユーザーIDを取得する
-		Integer userId = addToCartService.addToCart(form);
+		Integer userId = addToCartService.addToCart(form, loginUser);
 		/* ログインした際に、仮IDを基に注文情報を取得して
 		 * 本IDに書き換える為にセッションスコープに格納しておく 
 		 */

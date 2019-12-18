@@ -7,9 +7,11 @@ import javax.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.noodle.domain.LoginUser;
 import com.noodle.domain.Order;
 import com.noodle.domain.OrderItem;
 import com.noodle.domain.OrderTopping;
@@ -49,25 +51,35 @@ public class AddToCartService {
 	 * @param form item_detail.htmlから受け取ったリクエストパラメータ
 	 * @return このオーダーのユーザーID
 	 */
-	public int addToCart(OrderItemForm form) {
-		// セッションIDを10進数に変換
-		BigInteger decSessionId = new BigInteger(session.getId(), 16);
-		// int型に変換(ハッシュコードに変換)
-		int preUserId = decSessionId.hashCode();
-		
+	public int addToCart(
+			OrderItemForm form,
+			@AuthenticationPrincipal LoginUser loginUser) {
+		int userId;
+			try {
+				// ログインしている場合
+				userId = loginUser.getUser().getId();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				// ログインしていない場合
+				// セッションIDを10進数に変換
+				BigInteger decSessionId = new BigInteger(session.getId(), 16);
+				// int型に変換(ハッシュコードに変換)
+				userId = decSessionId.hashCode();			
+			}
 		// UserIdで検索して注文前のオーダーが作成されているか確認
 		Order order;
-		if(orderRepository.findByUserIdAndStatus(preUserId) == null) {
+		if(orderRepository.findByUserIdAndStatus(userId) == null) {
 			// オーダーがなかったらOrderオブジェクトを生成
 			order = new Order();
-			order.setUserId(preUserId);
+			order.setUserId(userId);
 			order.setStatus(0);
 			order.setTotalPrice(0);
 			orderRepository.insert(order);
 			LOGGER.info("注文が存在しなかったので新規に作成しました");
 		}else {
 			// オーダーが既に存在したらそれをとってくる
-			order = orderRepository.findByUserIdAndStatus(preUserId);
+			order = orderRepository.findByUserIdAndStatus(userId);
 			LOGGER.info("注文が既に存在したので既存の注文に追加します");
 		}
 		
@@ -99,5 +111,4 @@ public class AddToCartService {
 		}
 		return order.getUserId();
 	}
-	
 }

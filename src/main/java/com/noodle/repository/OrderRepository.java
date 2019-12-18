@@ -129,7 +129,6 @@ public class OrderRepository {
 			orderToppingCount++;
 			LOGGER.info(orderToppingCount + "件目の注文トッピング情報を取得しました");
 		}
-		System.err.println("rsのorder:"+order);
 		return order;
 	};
 	
@@ -280,7 +279,7 @@ public class OrderRepository {
 				"LEFT OUTER JOIN order_toppings  AS ot ON oi.id = ot.order_item_id " + 
 				"LEFT OUTER JOIN toppings        AS top ON top.id = ot.topping_id " + 
 				"WHERE o.user_id=:user_id AND o.status=0 " + 
-				"ORDER BY oi.id ASC, ot.id ASC";
+				"ORDER BY o.id DESC, oi.id ASC, ot.id ASC";
 		SqlParameterSource param = new MapSqlParameterSource()
 				.addValue("user_id", userId);
 		Order order = template.query(sql, param, ORDER_EXTRACTOR);
