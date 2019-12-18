@@ -52,7 +52,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 		http.authorizeRequests() // 認可に関する設定
 			.antMatchers("/","/showItemDetail/**","/showLogin","/showRegisterUser",
-					"/addToCart","/showCartList","/deleteCartItem/**","/registerUser").permitAll() //「/」などのパスは全てのユーザに許可
+					"/addToCart","/showCartList","/deleteCartItem/**","/registerUser","/loginError","/logoutSuccess").permitAll() //「/」などのパスは全てのユーザに許可
 			//.antMatchers("/admin/**").hasRole("ADMIN") // /admin/から始まるパスはADMIN権限でログインしている場合のみアクセス可(権限設定時の「ROLE_」を除いた文字列を指定)
 			//.antMatchers("/showOrderConfirm","/showOrderFinished","/showOrderHistory","/logout").hasRole("USER") // /user/から始まるパスはUSER権限でログインしている場合のみアクセス可(権限設定時の「ROLE_」を除いた文字列を指定)
 			.anyRequest().authenticated(); // それ以外のパスは認証が必要
@@ -69,7 +69,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //		
 		http.logout() // ログアウトに関する設定
 			.logoutRequestMatcher(new AntPathRequestMatcher("/logout")) // ログアウトさせる際に遷移させるパス
-			.logoutSuccessUrl("/") // ログアウト後に遷移させるパス(ここではログイン画面を設定)
+			.logoutSuccessUrl("/logoutSuccess") // ログアウト後に遷移させるパス(ここではログイン画面を設定)
 			.deleteCookies("JSESSIONID") // ログアウト後、Cookieに保存されているセッションIDを削除
 			.invalidateHttpSession(false); // true:ログアウト後、セッションを無効にする false:セッションを無効にしない
 		

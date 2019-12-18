@@ -26,6 +26,9 @@ import com.noodle.service.LoginService;
 @Controller
 public class LoginController {
 
+	/**	URLのドメイン */
+	private final String URL_DOMAIN = "http://localhost:8080";
+
 	@Autowired
 	private LoginService loginService;
 	@Autowired
@@ -45,9 +48,11 @@ public class LoginController {
 	 */
 	@RequestMapping("/showLogin")
 	public String showLogin() throws ServletException, IOException {
-		if(request.getHeader("REFERER").equals("http://localhost:8080/showRegisterUser") 
-				|| request.getHeader("REFERER").equals("http://localhost:8080/registerUser")) {
+		if(request.getHeader("REFERER").equals(URL_DOMAIN + "/showRegisterUser") 
+				|| request.getHeader("REFERER").equals(URL_DOMAIN + "/registerUser")) {
+			// ログイン画面に遷移前のページがユーザー登録画面かユーザー登録処理のパスであれば何もしない
 		}else {
+			// ログイン画面に遷移前のページが上記以外ならセッションスコープに遷移前のページ情報を格納
 			session.setAttribute("referer", request.getHeader("REFERER"));
 		}
 		return "login.html";
@@ -55,17 +60,21 @@ public class LoginController {
 	
 	@RequestMapping("/loginSuccess")
 	public String loginSuccess(@AuthenticationPrincipal LoginUser loginUser) throws ServletException, IOException {
-		//TODO ユーザーIDを書き換える処理を書く
-		System.err.println("ログインユーザーのID:" + loginUser.getUser().getId());
 		// ログイン前に商品を追加していないとpreIdはnullになる
 		Integer userId = loginUser.getUser().getId();
-		Integer preId = (Integer) session.getAttribute("preId");
-		System.err.println("セッションID:" + preId);
+		Integer preId = (Integer) session.getAttribute("userId");
+		//TODO あとで消す
+		System.err.println("/loginSuccessのpreId:"+preId);
 		if(preId != null) {
 			loginService.updateOrdersUserId(userId, preId);
 			LOGGER.info("ログイン前の注文情報をログインユーザーに移行しました");
 		}
-		return "forward:/";
+		// ログイン画面に遷移前のページのURLをパスだけ切り出す
+		String pathBeforeLoginPage = session.getAttribute("referer").toString().replace(URL_DOMAIN, "");
+		// リファラ情報を削除
+		session.removeAttribute("referer");
+		LOGGER.info("ユーザーID:" + userId + "がログインに成功しました");
+		return "forward:/" + pathBeforeLoginPage;
 	}
 	
 	/**
@@ -77,9 +86,8 @@ public class LoginController {
 	 */
 	@RequestMapping("/loginError")
 	public String loginError(Model model) throws ServletException, IOException {
-		model.addAttribute("error", "メールアドレス、またはパスワードが間違っています");
+		model.addAttribute("error", "*メールアドレス、またはパスワードが間違っています");
+		LOGGER.info("ログインの失敗がありました");
 		return "login.html";
 	}
-	
-	
 }

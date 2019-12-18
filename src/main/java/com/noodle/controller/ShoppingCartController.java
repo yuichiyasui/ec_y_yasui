@@ -41,15 +41,14 @@ public class ShoppingCartController {
 	 * @return ショッピングカート画面
 	 */
 	@RequestMapping("/addToCart")
-	public String addToCart(OrderItemForm form, Model model) {
+	public String addToCart(OrderItemForm form) {
 		// 注文を作成して商品を追加して、作成した注文のユーザーIDを取得する
 		Integer userId = addToCartService.addToCart(form);
-		// ユーザーIDを基に注文情報を取得してリクエストスコープに格納する
-		model.addAttribute("order", showCartListService.showCartList(userId));
-		// ログインした際に、仮IDを基に注文情報を取得して本IDに書き換える為に
-		// セッションスコープに格納しておく 
-		session.setAttribute("preId", userId);
-		return "cart_list.html";
+		/* ログインした際に、仮IDを基に注文情報を取得して
+		 * 本IDに書き換える為にセッションスコープに格納しておく 
+		 */
+		session.setAttribute("userId", userId);
+		return "redirect:/showCartList";
 	}
 	
 	/**
@@ -60,19 +59,25 @@ public class ShoppingCartController {
 	 */
 	@RequestMapping("/showCartList")
 	public String showCartList(
-			Integer userId,
 			@AuthenticationPrincipal LoginUser loginUser,
 			Model model
 			) {
+		Integer userId;
 		if (loginUser != null) {
 			// ログインしている場合の処理
 			userId = loginUser.getUser().getId();
+			//TODO あとで消す
+			System.err.println("ShoppingCartControllerのshowCartListメソッドでログインしている場合の処理が呼ばれました:"+userId);
 		} else if (session.getAttribute("userId") != null) {
-			// セッションスコープにuserIDが入っている場合の処理??
+			// カートに商品が追加されている(セッションスコープにuserIDが入っている)場合の処理
 			userId = (Integer) (session.getAttribute("userId"));
 		} else {
-			// ログインしていない場合
-			userId = new BigInteger(session.getId(), 16).intValue();
+			// カートに商品が追加されていなくてログインしていない場合
+			// 仮IDを発行
+			userId = new BigInteger(session.getId(), 16).hashCode();
+			/* ログインした際に、仮IDを基に注文情報を取得して
+			 * 本IDに書き換える為にセッションスコープに格納しておく 
+			 */
 			session.setAttribute("userId", userId);
 		}
 		Order order;

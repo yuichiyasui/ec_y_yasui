@@ -11,8 +11,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.noodle.domain.Order;
+import com.noodle.domain.User;
 import com.noodle.form.ReceiveOrderForm;
 import com.noodle.repository.OrderRepository;
+import com.noodle.repository.UserRepository;
 
 /**
  * order_confirm.htmlからお届け先情報を受け取り、
@@ -26,10 +28,21 @@ public class ReceiveOrderService {
 
 	@Autowired
 	private OrderRepository orderRepository;
+	@Autowired
+	private UserRepository userRepository;
 	
 	/** ロギング処理 */
 	private static final Logger LOGGER
 	= LoggerFactory.getLogger(AddToCartService.class);
+	
+	/**
+	 * ユーザーIDを基にユーザー情報を取得するメソッド.
+	 * @param userId ユーザーID
+	 * @return ユーザー情報
+	 */
+	public User getUserInfomationById(Integer userId) {
+		return userRepository.load(userId);
+	}
 	
 	/**
 	 * 注文受領処理を行うメソッド.

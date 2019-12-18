@@ -3829,8 +3829,6 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
 .navbar {
   position: relative;
   min-height: 50px;
-  margin-bottom: 20px;
-  border: 1px solid transparent;
 }
 @media (min-width: 768px) {
   .navbar {
@@ -6329,6 +6327,7 @@ button.close {
 header {
     background-color:black;
     margin: -1px -1px 0 -1px;
+    width: 100%; 
 }
 #logo{
 	width:220px;

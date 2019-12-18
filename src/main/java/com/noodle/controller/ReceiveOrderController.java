@@ -30,6 +30,8 @@ public class ReceiveOrderController {
 	@RequestMapping("/showOrderConfirm")
 	public String showOrderConfirm(Integer userId, Model model) {
 		model.addAttribute("order", showCartListService.showCartList(userId));
+		// 入力フォームの初期値にユーザー情報をセット
+		model.addAttribute("user", receiveOrderService.getUserInfomationById(userId));
 		return "order_confirm.html";
 	}
 	
@@ -42,5 +44,4 @@ public class ReceiveOrderController {
 		receiveOrderService.receiveOrder(form);
 		return "order_finished.html";
 	}
-	
 }

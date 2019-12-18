@@ -1,5 +1,7 @@
 package com.noodle.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.stereotype.Controller;
@@ -8,6 +10,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.noodle.form.ReceiveOrderForm;
+import com.noodle.service.AddToCartService;
 import com.noodle.service.ShowItemDetailService;
 import com.noodle.service.ShowItemListService;
 
@@ -24,6 +27,10 @@ public class ShowPageController {
 	private ShowItemListService showItemListService;
 	@Autowired
 	private ShowItemDetailService showItemDetailService;
+	
+	/** ロギング処理 */
+	private static final Logger LOGGER
+	= LoggerFactory.getLogger(AddToCartService.class);
 	
 	/**
 	 * お届け先情報入力画面のエラーチェック用.
@@ -44,6 +51,12 @@ public class ShowPageController {
 		return "item_list.html";
 	}
 
+	@RequestMapping("/logoutSuccess")
+	public String logoutSuccess() {
+		LOGGER.info("ログアウトに成功しました");
+		return "forward:/";
+	}
+	
 	/**
 	 * 商品詳細画面に遷移するメソッド.
 	 * @return 商品詳細画面

@@ -34,6 +34,18 @@ public class UserRepository {
 	};
 	
 	/**
+	 * 主キー検索のメソッド.
+	 * @param userId ユーザーID
+	 * @return ユーザー情報
+	 */
+	public User load(Integer userId) {
+		String sql = "SELECT id,name,email,password,zipcode,address,telephone "
+				+ "FROM users WHERE id = :user_id";
+		SqlParameterSource param = new MapSqlParameterSource().addValue("user_id", userId);
+		return template.queryForObject(sql, param, USER_ROW_MAPPER);
+	}
+	
+	/**
 	 * メールアドレスでユーザー情報を取得するメソッド.
 	 * @param email メールアドレス
 	 * @return ユーザー情報 / 存在しなければnullを返す

@@ -156,7 +156,7 @@ $(function() {
 									</div>
 								</td>
 								<td>
-									<input type="text" name="destinationName" style="width:80%;">
+									<input type="text" name="destinationName" style="width:80%;" th:value=${user.name}>
 								</td>
 							</tr>
 							<tr>
@@ -166,7 +166,7 @@ $(function() {
 									</div>
 								</td>
 								<td>
-									<input type="text" name="destinationEmail" style="width:80%;">
+									<input type="text" name="destinationEmail" style="width:80%;" th:value="${user.email}">
 								</td>
 							</tr>
 							<tr>
@@ -176,7 +176,7 @@ $(function() {
 									</div>
 								</td>
 								<td>
-									<input type="text" name="destinationZipcode" style="width:55%;">&nbsp;&nbsp;
+									<input type="text" name="destinationZipcode" style="width:55%;" th:value="${user.zipcode}">&nbsp;&nbsp;
 									<input type="button" id="searchAddress" class="btn btn-primary" 
 									style="color:#fff;
 									background-color:#f0ad4e;
@@ -190,7 +190,7 @@ $(function() {
 									</div>
 								</td>
 								<td>
-									<input type="text" name="destinationAddress" style="width:80%;">
+									<input type="text" name="destinationAddress" style="width:80%;" th:value="${user.address}">
 								</td>
 							</tr>
 							<tr>
@@ -200,7 +200,7 @@ $(function() {
 									</div>
 								</td>
 								<td>
-									<input type="text" name="destinationTel" style="width:80%;">
+									<input type="text" name="destinationTel" style="width:80%;" th:value="${user.telephone}">
 								</td>
 							</tr>
 							<tr>
