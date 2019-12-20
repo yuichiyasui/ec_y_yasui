@@ -55,11 +55,12 @@ public class OrderRepository {
 	};
 	
 	/**	結合した複数のテーブルを参照する場合 */
-	private final static ResultSetExtractor<Order> ORDER_EXTRACTOR = (rs)->{
-		Order order = new Order();
+	private final ResultSetExtractor<List<Order>> ORDER_EXTRACTOR = (rs)->{
 		OrderItem orderItem = null;
-		List<OrderItem> orderItemList = new ArrayList<>();
+		Order order = null;
 		List<OrderTopping> orderToppingList = null;
+		List<Order> orderList = new ArrayList<>();
+		List<OrderItem> orderItemList = null;
 		int preOrderId = 0;
 		int preOrderItemId = 0;
 		// ログで商品情報の取得の実行回数を表示する用
@@ -69,6 +70,7 @@ public class OrderRepository {
 		while(rs.next()) {
 			// Orderオブジェクトの作成(前回とidが重複しなければ実行)
 			if(preOrderId != rs.getInt("o_id")) {
+				order = new Order();
 				order.setId(rs.getInt("o_id"));
 				order.setUserId(rs.getInt("o_user_id"));
 				order.setStatus(rs.getInt("o_status"));
@@ -81,8 +83,10 @@ public class OrderRepository {
 				order.setDestinationTel(rs.getString("o_destination_tel"));
 				order.setDeliveryTime(rs.getTimestamp("o_delivery_time"));
 				order.setPaymentMethod(rs.getInt("o_payment_method"));
+				orderItemList = new ArrayList<>();
 				order.setOrderItemList(orderItemList);
 				preOrderId = rs.getInt("o_id");
+				orderList.add(order);
 				LOGGER.info("注文情報を取得しました");
 			}
 			// OrderItemオブジェクトの作成(前回とidが重複しなければ実行)
@@ -129,7 +133,7 @@ public class OrderRepository {
 			orderToppingCount++;
 			LOGGER.info(orderToppingCount + "件目の注文トッピング情報を取得しました");
 		}
-		return order;
+		return orderList;
 	};
 	
 	/**
@@ -232,7 +236,7 @@ public class OrderRepository {
 				"ORDER BY oi.id ASC, ot.id ASC";
 		SqlParameterSource param = new MapSqlParameterSource()
 				.addValue("id", id);
-		return template.query(sql, param, ORDER_EXTRACTOR);
+		return template.query(sql, param, ORDER_EXTRACTOR).get(0);
 	}
 	
 	/**
@@ -282,7 +286,7 @@ public class OrderRepository {
 				"ORDER BY o.id DESC, oi.id ASC, ot.id ASC";
 		SqlParameterSource param = new MapSqlParameterSource()
 				.addValue("user_id", userId);
-		Order order = template.query(sql, param, ORDER_EXTRACTOR);
+		Order order = template.query(sql, param, ORDER_EXTRACTOR).get(0);
 		return order;
 	}
 	
@@ -325,6 +329,17 @@ public class OrderRepository {
 				.addValue("destination_tel", order.getDestinationTel())
 				.addValue("delivery_time", order.getDeliveryTime())
 				.addValue("payment_method", order.getPaymentMethod());
+		template.update(sql, param);
+	}
+		
+	/**
+	 * ユーザーIDで注文情報を削除するメソッド.
+	 * 利用されるクラス:LoginService
+	 * @param userId ユーザーID
+	 */
+	public void deleteByUserId(Integer userId) {
+		String sql = "DELETE FROM orders WHERE user_id = :userId";
+		SqlParameterSource param = new MapSqlParameterSource().addValue("userId", userId);
 		template.update(sql, param);
 	}
 }

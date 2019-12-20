@@ -58,15 +58,26 @@ public class LoginController {
 		return "login.html";
 	}
 	
+	/**
+	 * ログイン成功時に、ログイン前の仮ユーザーIDに紐づく注文情報を
+	 * ログイン後のユーザーIDに紐づけるメソッド.
+	 * @param loginUser ログインユーザー情報
+	 * @return ログイン画面に遷移前の画面
+	 * @throws ServletException
+	 * @throws IOException
+	 */
 	@RequestMapping("/loginSuccess")
 	public String loginSuccess(@AuthenticationPrincipal LoginUser loginUser) throws ServletException, IOException {
-		// ログイン前に商品を追加していないとpreIdはnullになる
 		Integer userId = loginUser.getUser().getId();
-		Integer preId = (Integer) session.getAttribute("userId");
-		//TODO あとで消す
-		System.err.println("/loginSuccessのpreId:"+preId);
-		if(preId != null) {
-			loginService.updateOrdersUserId(userId, preId);
+		Integer preUserId = (Integer) session.getAttribute("userId");
+		if(loginService.isCheckOrderExist(userId) == false) {
+			// ログインしたユーザーが注文前の注文情報を保持していない場合
+			loginService.createNewOrderWhenLogin(userId);
+		}
+		if(preUserId != null) {			// ログイン前に商品を追加していないとpreIdはnullになる
+			// ログイン前に注文がある場合
+			loginService.updateOrderItemsOrderId(userId, preUserId);
+			loginService.deleteOrder(preUserId);
 			LOGGER.info("ログイン前の注文情報をログインユーザーに移行しました");
 		}
 		// ログイン画面に遷移前のページのURLをパスだけ切り出す

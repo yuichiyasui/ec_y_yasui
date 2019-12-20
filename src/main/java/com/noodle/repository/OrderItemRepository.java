@@ -83,4 +83,20 @@ public class OrderItemRepository {
 		SqlParameterSource param = new MapSqlParameterSource().addValue("id", id);
 		template.update(sql, param);
 	}
+	
+	/**
+	 * 注文商品の注文IDをログイン前に発行した注文IDから
+	 * ログイン後に発行した注文IDに書き換えるメソッド.
+	 * 利用されるクラス:LoginService
+	 * @param orderId ログイン後に発行した注文ID
+	 * @param preOrderId ログイン前に発行した注文ID
+	 */
+	public void updateOrderItemId(Integer orderId, Integer preOrderId) {
+		String sql = "UPDATE order_items SET order_id = :order_Id WHERE order_id = :pre_order_id";
+		SqlParameterSource param = new MapSqlParameterSource()
+				.addValue("order_Id", orderId)
+				.addValue("pre_order_id", preOrderId);
+		template.update(sql, param);
+	}
+	
 }

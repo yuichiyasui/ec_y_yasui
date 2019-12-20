@@ -59,7 +59,6 @@ public class AddToCartService {
 				// ログインしている場合
 				userId = loginUser.getUser().getId();
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 				// ログインしていない場合
 				// セッションIDを10進数に変換

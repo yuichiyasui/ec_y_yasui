@@ -53,8 +53,8 @@ public class ShoppingCartController {
 	
 	/**
 	 * カートを表示するメソッド.
-	 * @param userId ユーザーID
-	 * @param model リクエストスコープ
+	 * @param loginUser ログインユーザー情報
+	 * @param model　リクエストスコープ
 	 * @return ショッピングカート画面
 	 */
 	@RequestMapping("/showCartList")
@@ -66,8 +66,6 @@ public class ShoppingCartController {
 		if (loginUser != null) {
 			// ログインしている場合の処理
 			userId = loginUser.getUser().getId();
-			//TODO あとで消す
-			System.err.println("ShoppingCartControllerのshowCartListメソッドでログインしている場合の処理が呼ばれました:"+userId);
 		} else if (session.getAttribute("userId") != null) {
 			// カートに商品が追加されている(セッションスコープにuserIDが入っている)場合の処理
 			userId = (Integer) (session.getAttribute("userId"));
