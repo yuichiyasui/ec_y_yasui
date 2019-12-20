@@ -185,8 +185,8 @@ public class OrderRepository {
 				+ "FROM orders WHERE user_id=:user_id AND status=0";
 		SqlParameterSource param = new MapSqlParameterSource()
 				.addValue("user_id", userId);
-		List<Order> orderList = template.query(sql, param, ORDER_ROW_MAPPER);
-		return orderList.get(0).getId();
+		Order order = template.queryForObject(sql, param, ORDER_ROW_MAPPER);
+		return order.getId();
 	}
 	
 	/**
