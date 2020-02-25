@@ -5,7 +5,7 @@
 #    url: jdbc:postgresql://localhost:5432/ec_y_yasui
 #    username: postgres
 #    password: postgres
-    
+#    
 # Herokuのpostgres接続情報(検証済み)
 spring:
   datasource:
