@@ -49,12 +49,17 @@ public class LoginController {
 	 */
 	@RequestMapping("/showLogin")
 	public String showLogin() throws ServletException, IOException {
-		if (request.getHeader("REFERER").equals(URL_DOMAIN + "/showRegisterUser")
-				|| request.getHeader("REFERER").equals(URL_DOMAIN + "/registerUser")) {
-			// ログイン画面に遷移前のページがユーザー登録画面かユーザー登録処理のパスであれば何もしない
-		} else {
-			// ログイン画面に遷移前のページが上記以外ならセッションスコープに遷移前のページ情報を格納
-			session.setAttribute("referer", request.getHeader("REFERER"));
+		try {
+			if (request.getHeader("REFERER").equals(URL_DOMAIN + "/showRegisterUser")
+					|| request.getHeader("REFERER").equals(URL_DOMAIN + "/registerUser")) {
+				// ログイン画面に遷移前のページがユーザー登録画面かユーザー登録処理のパスであれば何もしない
+			} else {
+				// ログイン画面に遷移前のページが上記以外ならセッションスコープに遷移前のページ情報を格納
+				session.setAttribute("referer", request.getHeader("REFERER"));
+			}
+		} catch (Exception e) {
+			LOGGER.debug("存在しないパスへのアクセスがありました");
+			e.printStackTrace();
 		}
 		return "login.html";
 	}
