@@ -1,136 +1,133 @@
 <!DOCTYPE html>
-<html lang="ja" xmlns:th="http://thymeleaf.org">
+<html lang="ja" xmlns:th="http://thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
 <link rel="icon" type="image/x-icon" th:href="@{/img/favicon.ico}">
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>ラーメンのデリバリーのらくらく軒</title>
-<link th:href="@{/css/bootstrap.css}" rel="stylesheet">
+<link rel="stylesheet"
+	href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+	integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+	crossorigin="anonymous">
 <link th:href="@{/css/noodle.css}" rel="stylesheet">
-<link th:href="@{/css/swiper.css}" rel="stylesheet">
+<script type="text/javascript"
+	src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
 </head>
 <body>
-<header id="header">
-		<nav class="navbar navbar-default">
-			<div class="container-fluid">
-				<!-- Brand and toggle get grouped for better mobile display -->
-				<div class="navbar-header">
-					<button type="button" class="navbar-toggle collapsed"
-						data-toggle="collapse" data-target="#bs-example-navbar-collapse-1"
-						aria-expanded="false">
-						<span class="sr-only">Toggle navigation</span> <span
-							class="icon-bar"></span> <span class="icon-bar"></span> <span
-							class="icon-bar"></span>
-					</button>
-					<a class="navbar-brand" th:href="@{/}"> <!-- 企業ロゴ --> <img id="logo"
-						alt="main log" th:src="@{/img/header_logo.png}" height="35">
-					</a>
-				</div>
+	<!-- ナビゲーションバー -->
+	<nav class="navbar sticky-top navbar-expand-lg"
+		style="background-color: rgba(0, 0, 0, 0.9);">
+		<a class="navbar-brand" th:href="@{/}"><img id="logo"
+			alt="main log" th:src="@{/img/header_logo.png}" height="50"></a>
+		<button type="button" class="navbar-toggler" data-toggle="collapse"
+			data-target="#navbarNav" aria-controls="navbarNav"
+			aria-expanded="false" aria-label="ナビゲーションの切替">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+		<div class="collapse navbar-collapse" id="navbarNav">
+			<ul class="navbar-nav ml-auto">
+				<li class="nav-item nav-link text-white"
+					sec:authorize="hasRole('USER')"><span
+					sec:authentication="principal.user.name"></span>さん&nbsp;こんにちは！</li>
+				<li class="nav-item"><a th:href="@{/showCartList}"
+					class="nav-link text-white">ショッピングカート</a></li>
+				<li class="nav-item"><a th:href="@{/showOrderHistory}"
+					class="nav-link text-white">注文履歴</a></li>
+				<li class="nav-item" sec:authorize="hasRole('USER') == false">
+					<a th:href="@{/showLogin}" class="nav-link text-white">ログイン</a>
+				</li>
+				<li class="nav-item" sec:authorize="hasRole('USER')"><a
+					th:href="@{/logout}" class="nav-link text-white">ログアウト</a></li>
+			</ul>
+		</div>
+	</nav>
 
-				<!-- Collect the nav links, forms, and other content for toggling -->
-				<div class="collapse navbar-collapse"
-					id="bs-example-navbar-collapse-1">
-					<p class="navbar-text navbar-right">
-						<a th:href="@{/showCartList}" class="navbar-link">ショッピングカート</a>&nbsp;&nbsp;
-						<a th:href="@{/showOrderHistory}" class="navbar-link">注文履歴</a>&nbsp;&nbsp;
-						<a th:href="@{/showLogin}" class="navbar-link">ログイン</a>&nbsp;&nbsp;
-						<a th:href="@{/logout}" class="navbar-link">ログアウト</a>
-					</p>
-				</div>
-				<!-- /.navbar-collapse -->
+	<!-- カルーセル -->
+	<div id="carouselExampleIndicators" class="carousel slide mb-5"
+		data-ride="carousel">
+		<!-- インジケータの設定 -->
+		<ol class="carousel-indicators">
+			<li data-target="#carouselExampleIndicators" data-slide-to="0"
+				class="active"></li>
+			<li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
+		</ol>
+		<!-- スライドさせる画像の設定 -->
+		<div class="carousel-inner">
+			<div class="carousel-item active">
+				<img class="img-fluid" th:src="@{/img/sample1.jpg}">
 			</div>
-			<!-- /.container-fluid -->
-		</nav>
-</header>
-
-<!-- スライドウィンドウ -->
-<!-- Slider main container -->
-<div class="swiper-container">
-    <!-- Additional required wrapper -->
-    <div class="swiper-wrapper">
-        <!-- Slides -->
-        <div style="text-align:center;" class="swiper-slide"><img th:src="@{/img/sample2.jpg}"></div>
-        <div style="text-align:center;" class="swiper-slide"><img th:src="@{/img/sample1.jpg}"></div>
-        <div style="text-align:center;" class="swiper-slide"><img th:src="@{/img/sample3.jpg}"></div>
-    </div>
-    <!-- If we need pagination -->
-    <div class="swiper-pagination"></div>
-    
-    <!-- If we need navigation buttons -->
-    <div class="swiper-button-prev"></div>
-    <div class="swiper-button-next"></div>
-
-</div>
-	<script th:src="@{/js/swiper.js}"></script>
-	<script>
-	var swiper = new Swiper('.swiper-container', {
-		  navigation: {
-		    nextEl: '.swiper-button-next',
-		    prevEl: '.swiper-button-prev',
-		  },
-		  loop: true,
-		  autoplay: {
-		    delay: 3000,
-		  },
-		});
-	</script>
-
-	<div class="container">
-
-		<!-- search form -->
-		<div class="row">
-			<div
-				class="col-lg-offset-3 col-lg-6 col-md-offset-2 col-md-8 col-sm-10 col-xs-12">
-				<div class="panel panel-default">
-					<div class="panel-heading">
-						<div class="panel-title">商品を検索する</div>
-					</div>
-					<div class="panel-body">
-						<form method="post" action="#" class="form-horizontal">
-							<div class="form-group">
-								<label for="code" class="control-label col-sm-2">商品名</label>
-								<div class="col-sm-9">
-									<input type="text" name="code" id="code"
-										class="form-control input-sm" />
-								</div>
-							</div>
-							<div class="text-center">
-								<button type="submit" value="検索" class="btn btn-primary">検索</button>
-								<button type="reset" value="クリア" class="btn btn-default">クリア</button>
-							</div>
-						</form>
-					</div>
-				</div>
+			<div class="carousel-item">
+				<img class="img-fluid" th:src="@{/img/sample2.jpg}">
 			</div>
 		</div>
+		<!-- /.carousel-inner -->
+		<!-- スライドコントロールの設定 -->
+		<a class="carousel-control-prev" href="#carouselExampleIndicators"
+			role="button" data-slide="prev"> ＜ </a> <a
+			class="carousel-control-next" href="#carouselExampleIndicators"
+			role="button" data-slide="next"> ＞ </a>
+	</div>
 
-		<!-- table -->
+	<div class="container">
 		<div class="row">
-			<div
-				class="table-responsive col-lg-offset-1 col-lg-10 col-md-offset-1 col-md-10 col-sm-10 col-xs-12">
-				<table class="table table-striped">
-					<tbody>
-						<tr class="col-lg-4" th:each="item:${itemList}">
-							<td>
-								<a th:href="@{'/showItemDetail/?id=' + ${item.id}}">
-									<img th:src="@{/img/} + ${item.imagePath}"
-										class="img-responsive img-rounded" width="200" height="143">
-								</a><br>
-								<a th:href="@{'/showItemDetail/?id=' + ${item.id}}"><span th:text="${item.name}">商品名</span></a><br>
-								<span class="price">&nbsp;М&nbsp;</span>&nbsp;&nbsp;<span th:text="${#numbers.formatInteger(item.priceM, 2 , 'COMMA')}">1,380</span>円(税抜)<br>
-								<span class="price">&nbsp;Ｌ</span>&nbsp;&nbsp;<span th:text="${#numbers.formatInteger(item.priceL, 2 , 'COMMA')}">2,380</span>円(税抜)<br>
-							</td>
-						</tr>
-					</tbody>
-				</table>
-
+			<div class="col-md-offset-1 col-md-10 mx-auto">
+				<div class="row mb-5">
+					<div class="col-sm-4" th:each="item:${itemList}">
+						<div class="card img-thumbnail mb-3 text-center shadow-sm border-0">
+							<a th:href="@{'/showItemDetail/?id=' + ${item.id}}"> <img
+								th:src="@{/img/} + ${item.imagePath}"
+								class="img-fluid rounded mb-2">
+							</a>
+							<div class="card-body pl-4 py-3 text-left">
+								<h6 class="card-title">
+									<a th:href="@{'/showItemDetail/?id=' + ${item.id}}"><span
+										class="text-dark" th:text="${item.name}">商品名</span></a>
+								</h6>
+								<div class="card-text">
+									<div class="mb-1">
+										<span class="btn btn-outline-primary rounded-circle px-1"
+											style="font-size: 12px; padding-top: 0px; padding-bottom: 0px;">Ｍ</span><span
+											class="pl-2"
+											th:text="${#numbers.formatInteger(item.priceM, 2 , 'COMMA')}">1,380</span>円(税抜)
+									</div>
+									<div>
+										<span class="btn btn-outline-primary rounded-circle px-1"
+											style="font-size: 12px; padding-top: 0px; padding-bottom: 0px;">Ｌ</span><span
+											class="pl-2"
+											th:text="${#numbers.formatInteger(item.priceL, 2 , 'COMMA')}">2,380</span>円(税抜)
+									</div>
+								</div>
+							</div>
+							<!-- /.card-body -->
+						</div>
+						<!-- /.card -->
+					</div>
+					<!-- /.col-sm-4 -->
+				</div>
+				<!-- /.row -->
+				<nav aria-label="ページ送りの実例">
+					<ul class="pagination justify-content-center">
+						<li class="page-item disabled"><a class="page-link" href="#">&larr;</a></li>
+						<li class="page-item active"><a class="page-link" href="#">1</a></li>
+						<li class="page-item disabled"><a class="page-link" href="#">&rarr;</a></li>
+					</ul>
+				</nav>
 			</div>
 		</div>
 	</div>
 	<!-- end container -->
+	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+		integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+		crossorigin="anonymous"></script>
 	<script
-		src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-	<script src="js/bootstrap.min.js"></script>
+		src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+		integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+		crossorigin="anonymous"></script>
+	<script
+		src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+		integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+		crossorigin="anonymous"></script>
 </body>
 </html>

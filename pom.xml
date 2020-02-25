@@ -13,8 +13,8 @@
 	<artifactId>ec_y_yasui</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 
-<!-- 	<packaging>war</packaging> -->
-	
+	<!-- <packaging>war</packaging> -->
+
 	<name>ec_y_yasui</name>
 	<description>Demo project for Spring Boot</description>
 
@@ -23,12 +23,9 @@
 	</properties>
 
 	<dependencies>
-	 <!-- 変更2. jarの依存関係を追加する -->
-<!--     <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-tomcat</artifactId>
-      <scope>provided</scope>
-    </dependency> -->
+		<!-- 変更2. jarの依存関係を追加する -->
+		<!-- <dependency> <groupId>org.springframework.boot</groupId> <artifactId>spring-boot-starter-tomcat</artifactId> 
+			<scope>provided</scope> </dependency> -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-jdbc</artifactId>
@@ -65,10 +62,8 @@
 			</exclusions>
 		</dependency>
 		<!-- ロギングメール送信関連(|QĐM4!) -->
-<!-- 		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-mail</artifactId>
-		</dependency> -->
+		<!-- <dependency> <groupId>org.springframework.boot</groupId> <artifactId>spring-boot-starter-mail</artifactId> 
+			</dependency> -->
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-core</artifactId>
@@ -80,6 +75,11 @@
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-config</artifactId>
+		</dependency>
+		<!-- ThymeleafでSpringSecurityを利用 -->
+		<dependency>
+			<groupId>org.thymeleaf.extras</groupId>
+			<artifactId>thymeleaf-extras-springsecurity5</artifactId>
 		</dependency>
 	</dependencies>
 

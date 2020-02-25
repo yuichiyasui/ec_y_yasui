@@ -1,8 +1,8 @@
 【データベースを作成】
 ・ターミナル用
-createdb -U postgres -E utf-8 -W -e ec_y_yasui
+createdb -U postgres -E utf-8 -W -e ec_xxxx
 
 ・PgAdmin用
-CREATE DATABASE ec_y_yasui
+CREATE DATABASE ec_xxxx
   WITH ENCODING='UTF8'
        OWNER=postgres;

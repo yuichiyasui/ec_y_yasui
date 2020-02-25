@@ -4,14 +4,16 @@ import java.math.BigInteger;
 
 import javax.servlet.http.HttpSession;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.noodle.domain.Order;
 import com.noodle.domain.LoginUser;
+import com.noodle.domain.Order;
 import com.noodle.form.OrderItemForm;
 import com.noodle.service.AddToCartService;
 import com.noodle.service.DeleteCartItemService;
@@ -33,6 +35,9 @@ public class ShoppingCartController {
 	private DeleteCartItemService deleteCartItemService;
 	@Autowired
 	private HttpSession session;
+	
+	/** ロギング処理 */
+	private static final Logger LOGGER = LoggerFactory.getLogger(ShoppingCartController.class);
 	
 	/**
 	 * カートに追加してショピングカートを表示するメソッド.
@@ -82,12 +87,12 @@ public class ShoppingCartController {
 		try {
 			order = showCartListService.showCartList(userId);
 		} catch (Exception e) {
-			e.printStackTrace();
+			LOGGER.info("注文商品が空になりました");
 			order = null;
 		}
 		if (order == null || order.getOrderItemList() == null) {
 			// 注文が存在していないか、注文はあるが注文商品がない場合
-			model.addAttribute("message", "カートの中身が空です。");
+			model.addAttribute("message", "カートの中身が空です");
 		} else {
 			// 注文と注文商品が存在している場合
 			model.addAttribute("order", order);
@@ -110,7 +115,7 @@ public class ShoppingCartController {
 		try {
 			order = showCartListService.showCartList(userId);
 		} catch (Exception e) {
-			e.printStackTrace();
+			LOGGER.info("注文商品が空になりました");
 			order = null;
 		}
 		if (order == null || order.getOrderItemList() == null) {
@@ -120,7 +125,7 @@ public class ShoppingCartController {
 			// 注文と注文商品が存在している場合
 			model.addAttribute("order", order);
 		}
-		return "cart_list.html";
+		return "redirect:/showCartList";
 	}
 	
 }

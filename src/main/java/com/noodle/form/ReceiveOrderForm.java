@@ -1,5 +1,7 @@
 package com.noodle.form;
 
+import javax.validation.constraints.NotNull;
+
 /**
  * order_confirm.htmlからお届け先情報を受け取るフォームクラス.
  * @author yuichi
@@ -21,6 +23,7 @@ public class ReceiveOrderForm {
 	/**	注文者の電話番号 */
 	private String destinationTel;
 	/**	配達日 */
+	@NotNull(message="*配達日の入力は必須です")
 	private String deliveryDate;
 	/**	配達時間 */
 	private String deliveryTime;

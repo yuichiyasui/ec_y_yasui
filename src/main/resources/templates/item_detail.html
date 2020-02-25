@@ -1,171 +1,146 @@
 <!DOCTYPE html>
-<html lang="ja" xmlns:th="http://thymeleaf.org">
+<html lang="ja" xmlns:th="http://thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
 <link rel="icon" type="image/x-icon" th:href="@{/img/favicon.ico}">
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>ラーメンのデリバリーのらくらく軒</title>
-<script th:src="@{https://code.jquery.com/jquery-3.4.1.min.js}"></script>
-<script th:src="@{/js/item_detail.js}"></script>
-<link th:href="@{/css/bootstrap.css}" rel="stylesheet">
+<link rel="stylesheet"
+	href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+	integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+	crossorigin="anonymous">
 <link th:href="@{/css/noodle.css}" rel="stylesheet">
-<script type="text/javascript">
-</script>
+<script type="text/javascript"
+	src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<script th:src="@{/js/item_detail.js}"></script>
 </head>
-<body>
-<header>
-		<nav class="navbar navbar-default">
-			<div class="container-fluid">
-				<!-- Brand and toggle get grouped for better mobile display -->
-				<div class="navbar-header">
-					<button type="button" class="navbar-toggle collapsed"
-						data-toggle="collapse" data-target="#bs-example-navbar-collapse-1"
-						aria-expanded="false">
-						<span class="sr-only">Toggle navigation</span> <span
-							class="icon-bar"></span> <span class="icon-bar"></span> <span
-							class="icon-bar"></span>
-					</button>
-					<a class="navbar-brand" th:href="@{/}"> <!-- 企業ロゴ -->
-						<img id="logo"
-						alt="main log" th:src="@{/img/header_logo.png}" height="35">
-					</a>
-				</div>
+<body style="padding-bottom: 4.5rem;">
+	<!-- ナビゲーションバー -->
+	<nav class="navbar sticky-top navbar-expand-lg"
+		style="background-color: rgba(0, 0, 0, 0.9);">
+		<a class="navbar-brand" th:href="@{/}"><img id="logo"
+			alt="main log" th:src="@{/img/header_logo.png}" height="50"></a>
+		<button type="button" class="navbar-toggler" data-toggle="collapse"
+			data-target="#navbarNav" aria-controls="navbarNav"
+			aria-expanded="false" aria-label="ナビゲーションの切替">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+		<div class="collapse navbar-collapse" id="navbarNav">
+			<ul class="navbar-nav ml-auto">
+				<li class="nav-item nav-link text-white"
+					sec:authorize="hasRole('USER')"><span
+					sec:authentication="principal.user.name"></span>さん&nbsp;こんにちは！</li>
+				<li class="nav-item"><a th:href="@{/showCartList}"
+					class="nav-link text-white">ショッピングカート</a></li>
+				<li class="nav-item"><a th:href="@{/showOrderHistory}"
+					class="nav-link text-white">注文履歴</a></li>
+				<li class="nav-item" sec:authorize="hasRole('USER') == false">
+					<a th:href="@{/showLogin}" class="nav-link text-white">ログイン</a>
+				</li>
+				<li class="nav-item" sec:authorize="hasRole('USER')"><a
+					th:href="@{/logout}" class="nav-link text-white">ログアウト</a></li>
+			</ul>
+		</div>
+	</nav>
 
-				<!-- Collect the nav links, forms, and other content for toggling -->
-				<div class="collapse navbar-collapse"
-					id="bs-example-navbar-collapse-1">
-					<p class="navbar-text navbar-right">
-						<a th:href="@{/showCartList}" class="navbar-link">ショッピングカート</a>&nbsp;&nbsp;
-						<a th:href="@{/showOrderHistory}" class="navbar-link">注文履歴</a>&nbsp;&nbsp;
-						<a th:href="@{/showLogin}" class="navbar-link">ログイン</a>&nbsp;&nbsp;
-						<a th:href="@{/logout}" class="navbar-link">ログアウト</a>
-					</p>
-				</div>
-				<!-- /.navbar-collapse -->
-			</div>
-			<!-- /.container-fluid -->
-		</nav>
-</header>
-
-	<div class="container">
-
-		<form th:action="@{/addToCart}" method="post">
-		<input type="hidden" name="itemId" th:value="${item.id}">
-		<div class="row">
-			<div class="col-xs-offset-2 col-xs-8">
-
-				<h3 class="text-center">商品詳細</h3>
-				<div class="row">
-					<div class="col-xs-5">
-						<img th:src="@{/img/} + ${item.imagePath}" class="img-responsive img-rounded">
-					</div>
-
-					<div class="col-xs-5">
-						<div class="bs-component">
-							<h4 th:text="${item.name}">商品名</h4> <br>
-							<br>
-							<p><span th:text="${item.description}"></span></p>
+	<div class="container my-5">
+		<div class="row justify-content-sm-center">
+			<div class="card col-sm-9 shadow-sm border-0">
+				<form class="card-body" th:action="@{/addToCart}" method="post">
+					<input type="hidden" name="itemId" th:value="${item.id}">
+					<h3 class="card-title text-center mb-3 font-weight-bold">商品詳細</h3>
+					<div class="row justify-content-sm-center">
+						<div class="col-sm-5 mb-3 ">
+							<img th:src="@{/img/} + ${item.imagePath}"
+								class="img-fluid rounded">
 						</div>
-					</div>
-				</div><br>
-				<div class="row">
-					<div class="col-xs-offset-2 col-xs-8">
-						<div class="form-group">
-							<div class="row">
-								<div class="col-sm-12">
-									<label for="inputResponsibleCompany">サイズ</label>
-								</div>
-								<div class="col-sm-12">
-									<label class="radio-inline">
-										<input class="size" type="radio"
-											name="size" value="M" checked="checked">
-										<span class="price">&nbsp;М&nbsp;</span>&nbsp;&nbsp;<span id="price_M" th:text="${#numbers.formatInteger(item.priceM, 2, 'COMMA')}">1,380</span>円(税抜)
-									</label>
-									<label class="radio-inline">
-										<input class="size" type="radio"
-											name="size" value="L">
-										<span class="price">&nbsp;Ｌ</span>&nbsp;&nbsp;<span id="price_L" th:text="${#numbers.formatInteger(item.priceL, 2, 'COMMA')}">2,380</span>円(税抜)
-									</label>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div><br>
-				<div class="row">
-					<div class="col-xs-offset-2 col-xs-8">
-						<div class="form-group">
-							<div class="row">
-								<div class="col-sm-12">
-									<label for="inputResponsibleCompany">
-										トッピング：&nbsp;1つにつき
-										<span>&nbsp;М&nbsp;</span>&nbsp;&nbsp;200円(税抜)
-										<span>&nbsp;Ｌ</span>&nbsp;&nbsp;300円(税抜)
-									</label>
-								</div>
-								<div class="col-sm-12" th:each="topping:${item.toppingList}">
-									<label class="checkbox-inline">
-										<input type="checkbox" name="orderToppingList" th:value="${topping.id}"><span th:text="${topping.name}">トッピング名</span>
-									</label>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="row">
-					<div class="col-xs-offset-2 col-xs-8">
-						<div class="form-group">
-							<div class="row">
-								<div class="col-xs-5 col-sm-5">
-									<label for="">数量:</label>
-									<select id="quantity" name="quantity" class="form-control">
-										<option value="1">1</option>
-										<option value="2">2</option>
-										<option value="3">3</option>
-										<option value="4">4</option>
-										<option value="5">5</option>
-										<option value="6">6</option>
-										<option value="7">7</option>
-										<option value="8">8</option>
-										<option value="9">9</option>
-										<option value="10">10</option>
-										<option value="11">11</option>
-										<option value="12">12</option>
-									</select>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-				<br>
-				<div class="row">
-					<div class="col-xs-offset-2 col-xs-10">
-						<div class="form-group">
-							<span id="totalprice" style="font-size:24pt;">
-								この商品の金額：<span id="total_price"></span>円（税抜）
-							</span>
-						</div>
-					</div>
-				</div>
-				<div class="row">
-					<div class="col-xs-offset-2 col-xs-3">
-						<div class="form-group">
+						<div class="col-sm-5">
+							<h4 class="mb-2" th:text="${item.name}">商品名</h4>
 							<p>
-								<input class="form-control btn btn-warning btn-block"
-									type="submit" value="カートに入れる">
+								<span th:text="${item.description}"></span>
 							</p>
-
+						</div>
+						<div class="col-sm-10">
+							<h6 class="font-weight-bold mt-4">サイズ</h6>
+							<div class="mb-4">
+								<div class="form-check form-check-inline">
+									<input id="inputSizeM" class="size form-check-input" type="radio" name="size"
+										value="M" checked="checked"><label for="inputSizeM"
+										class="form-check-label"><span
+										class="btn btn-outline-primary rounded-circle px-1 mx-1"
+										style="font-size: 12px; padding-top: 0px; padding-bottom: 0px;">Ｍ</span>¥<span
+										id="price_M"
+										th:text="${#numbers.formatInteger(item.priceM, 2, 'COMMA')}">1,380</span></label>
+								</div>
+								<div class="form-check form-check-inline">
+									<input id="inputSizeL" class="size form-check-input" type="radio" name="size"
+										value="L"><label for="inputSizeL" class="form-check-label"><span
+										class="btn btn-outline-primary rounded-circle px-1 mx-1"
+										style="font-size: 12px; padding-top: 0px; padding-bottom: 0px;">Ｌ</span>¥<span
+										id="price_L"
+										th:text="${#numbers.formatInteger(item.priceL, 2, 'COMMA')}">2,380</span>
+									</label>
+								</div>
+							</div>
+							<h6 class="font-weight-bold">トッピング</h6>
+							<span class="mb-1"> 1つにつき <span
+								class="btn btn-outline-primary rounded-circle px-1 mx-1"
+								style="font-size: 12px; padding-top: 0px; padding-bottom: 0px;">Ｍ</span>¥200
+								<span class="btn btn-outline-primary rounded-circle px-1 mx-1"
+								style="font-size: 12px; padding-top: 0px; padding-bottom: 0px;">Ｌ</span>¥300
+							</span>
+							<div class="form-group mb-4">
+								<div class="row">
+									<div class="col-sm-3" th:each="topping:${item.toppingList}">
+										<label class="checkbox-inline mb-0"> <input
+											type="checkbox" name="orderToppingList"
+											th:value="${topping.id}"><span class="ml-2"
+											th:text="${topping.name}">トッピング名</span>
+										</label>
+									</div>
+								</div>
+							</div>
+							<h6 class="font-weight-bold">数量</h6>
+							<div class="form-group mb-4">
+								<select id="quantity" name="quantity" class="form-control"
+									style="max-width: 8vh;">
+									<option th:each="i:${#numbers.sequence(1,10)}" th:value="${i}"
+										th:text="${i}">1</option>
+								</select>
+							</div>
 						</div>
 					</div>
-				</div>
+					<!-- 下部のナビゲーションバー -->
+					<nav class="navbar navbar-light fixed-bottom"
+						style="background-color: rgba(0, 0, 0, 0.6); min-height: 8vh;">
+						<div class="mx-auto text-white">
+							<span class="mr-3"> <span class="mr-2">この商品の金額</span> <span
+								class="font-weight-bold pr-2" style="font-size: 1.3rem;">
+									¥<span id="total_price"></span>+税
+							</span>
+							</span>
+							<button class="btn btn-info" type="submit">カートに追加</button>
+						</div>
+					</nav>
+				</form>
 			</div>
 		</div>
-		</form>
-
 	</div>
+
+
 	<!-- end container -->
+	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+		integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+		crossorigin="anonymous"></script>
 	<script
-		src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-	<script th:src="@{/js/bootstrap.min.js}"></script>
+		src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+		integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+		crossorigin="anonymous"></script>
+	<script
+		src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+		integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+		crossorigin="anonymous"></script>
 </body>
 </html>

@@ -34,7 +34,7 @@ public class RegisterUserController {
 	 * @return 空のフォームオブジェクト
 	 */
 	@ModelAttribute
-	public RegisterUserForm setUpUserRegisterForm() {
+	public RegisterUserForm setUpRegisterUserForm() {
 		return new RegisterUserForm();
 	}
 	
@@ -61,16 +61,19 @@ public class RegisterUserController {
 		// 条件1：メールアドレスが重複していないかチェック
 		if (registerUserService.findByEmail(form.getEmail()) != null) {
 			result.rejectValue("email", "", "*既に登録されているメールアドレスです");
+			model.addAttribute("isError","*エラーがあります");
 			LOGGER.info("既に登録されているメールアドレスでした");
 		}
 		// 条件2：パスワードが一致しているかどうかチェック
 		if(!(form.getPassword().equals(form.getConfirmationPassword()))) {
 			result.rejectValue("confirmationPassword","", "*パスワードが一致しません");
+			model.addAttribute("isError","*エラーがあります");
 			LOGGER.info("パスワードの一致しませんでした");
 		}
 		// 条件3：上記以外にエラーがないかチェック
 		if(result.hasErrors()) {
 			LOGGER.info("入力項目にエラーがありました");
+			model.addAttribute("isError","*エラーがあります");
 			return showRegisterUser();
 		}
 		// 条件4：何もエラーがない場合

@@ -64,8 +64,12 @@ public class LoginService {
 		Integer preOrderId = orderRepository.findIdByUserIdAndStatus(preUserId);
 		// 本ユーザーIDで、本ユーザーIDに紐づく注文IDを取得
 		Integer orderId = orderRepository.findIdByUserIdAndStatus(userId);
-		// 前のオーダーIDで検索して、今のオーダーIDに書き換え
-		orderItemRepository.updateOrderItemId(orderId, preOrderId);
+		if(orderId == 0) {
+			/** ログイン前に注文をしていなかった場合 */
+		}else {
+			// 前のオーダーIDで検索して、今のオーダーIDに書き換え
+			orderItemRepository.updateOrderItemId(orderId, preOrderId);			
+		}
 		session.removeAttribute("userId");
 	}
 	

@@ -43,46 +43,42 @@ public class AddToCartService {
 	private HttpSession session;
 
 	/** ロギング処理 */
-	private static final Logger LOGGER
-	= LoggerFactory.getLogger(AddToCartService.class);
-	
+	private static final Logger LOGGER = LoggerFactory.getLogger(AddToCartService.class);
+
 	/**
 	 * オーダー情報を作成するメソッド.
+	 * 
 	 * @param form item_detail.htmlから受け取ったリクエストパラメータ
 	 * @return このオーダーのユーザーID
 	 */
-	public int addToCart(
-			OrderItemForm form,
-			@AuthenticationPrincipal LoginUser loginUser) {
+	public int addToCart(OrderItemForm form, @AuthenticationPrincipal LoginUser loginUser) {
 		int userId;
-			try {
-				// ログインしている場合
-				userId = loginUser.getUser().getId();
-			} catch (Exception e) {
-				e.printStackTrace();
-				// ログインしていない場合
-				// セッションIDを10進数に変換
-				BigInteger decSessionId = new BigInteger(session.getId(), 16);
-				// int型に変換(ハッシュコードに変換)
-				userId = decSessionId.hashCode();			
-			}
+		try {
+			/** ログインしている場合 */
+			userId = loginUser.getUser().getId();
+		} catch (Exception e) {
+			LOGGER.info("ログインしていないユーザーに仮ユーザーIDを発行しました");
+			/** ログインしていない場合 */
+			// セッションIDを10進数に変換
+			BigInteger decSessionId = new BigInteger(session.getId(), 16);
+			// int型に変換
+			userId = decSessionId.intValue();
+		}
 		// UserIdで検索して注文前のオーダーが作成されているか確認
 		Order order;
-		if(orderRepository.findByUserIdAndStatus(userId) == null) {
+		if (orderRepository.findByUserIdAndStatus(userId) == null) {
 			// オーダーがなかったらOrderオブジェクトを生成
 			order = new Order();
 			order.setUserId(userId);
 			order.setStatus(0);
 			order.setTotalPrice(0);
 			orderRepository.insert(order);
-			LOGGER.info("注文が存在しなかったので新規に作成しました");
-		}else {
+			LOGGER.info("ユーザーID:" + userId + "の注文を新規に作成しました");
+		} else {
 			// オーダーが既に存在したらそれをとってくる
 			order = orderRepository.findByUserIdAndStatus(userId);
-			LOGGER.info("注文が既に存在したので既存の注文に追加します");
+			LOGGER.info("ユーザーID:" + userId + "の注文が既に存在したので既存の注文に追加します");
 		}
-		
-		// OrderItemオブジェクトを生成
 		OrderItem orderItem = new OrderItem();
 		orderItem.setItemId(form.getItemId());
 		// 注文IDを取得してセット
@@ -92,12 +88,10 @@ public class AddToCartService {
 		orderItem.setSize(form.getSize());
 		orderItemRepository.insert(orderItem);
 		LOGGER.info("注文商品情報をDBに追加しました");
-		
-		// OrderToppingオブジェクトを生成
 		OrderTopping orderTopping;
-		// OrderToppingListの中身があればINSERT
-		if(form.getOrderToppingList() != null ) {
-			for(Integer toppingId : form.getOrderToppingList()) {
+		if (form.getOrderToppingList() != null) {
+			/** OrderToppingListの中身があればINSERT */
+			for (Integer toppingId : form.getOrderToppingList()) {
 				orderTopping = new OrderTopping();
 				orderTopping.setToppingId(toppingId);
 				// order_itemsテーブルから主キーをとってくる

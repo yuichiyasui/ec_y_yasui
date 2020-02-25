@@ -1,5 +1,7 @@
 package com.noodle.repository;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.RowMapper;
@@ -20,6 +22,9 @@ import com.noodle.domain.User;
 public class UserRepository {
 	@Autowired
 	private NamedParameterJdbcTemplate template;
+	
+	/** ロギング処理 */
+	private static final Logger LOGGER = LoggerFactory.getLogger(OrderRepository.class);
 	
 	private final static RowMapper<User> USER_ROW_MAPPER = (rs,i)->{
 		User user = new User();
@@ -58,7 +63,7 @@ public class UserRepository {
 		try {
 			return template.queryForObject(sql, param, USER_ROW_MAPPER);
 		} catch (DataAccessException e) {
-			e.printStackTrace();
+			LOGGER.info(email+" は登録されていないメールアドレスでした");
 			return null;
 		}			
 	}
