@@ -27,9 +27,10 @@ import com.noodle.service.LoginService;
 public class LoginController {
 
 	/** URLのドメイン */
-	// TODO デプロイ時に変更
+	// TODO [ec_y_yasui]デプロイ時に変更
 	private final String URL_DOMAIN = "http://localhost:8080";
-
+//	private final String URL_DOMAIN = "https://ramen-d.herokuapp.com";
+	
 	@Autowired
 	private LoginService loginService;
 	@Autowired
