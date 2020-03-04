@@ -11,6 +11,9 @@
 	href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
 	integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
 	crossorigin="anonymous">
+<link
+	href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+	rel="stylesheet">
 <link th:href="@{/css/noodle.css}" rel="stylesheet">
 <script type="text/javascript"
 	src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
@@ -28,25 +31,36 @@
 		</button>
 		<div class="collapse navbar-collapse" id="navbarNav">
 			<ul class="navbar-nav ml-auto">
-				<li class="nav-item nav-link text-white"
-					sec:authorize="hasRole('USER')"><span
-					sec:authentication="principal.user.name"></span>さん&nbsp;こんにちは！</li>
-				<li class="nav-item"><a th:href="@{/showCartList}"
-					class="nav-link text-white">ショッピングカート</a></li>
-				<li class="nav-item"><a th:href="@{/showOrderHistory}"
-					class="nav-link text-white">注文履歴</a></li>
-				<li class="nav-item" sec:authorize="hasRole('USER') == false">
-					<a th:href="@{/showLogin}" class="nav-link text-white">ログイン</a>
+				<li class="nav-item dropdown" sec:authorize="hasRole('USER')">
+					<a href="#" class="nav-link text-white dropdown-toggle"
+					role="button" data-toggle="dropdown" id="navbarDropdownMenuLink"
+					aria-haspopup="true" aria-expanded="false">マイページ</a>
+					<div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+						<div class="dropdown-header text-center">
+							<i class="fa fa-user-circle fa-5x mb-1"></i>
+							<div>
+								<span sec:authentication="principal.user.name"></span><span>さん</span>
+							</div>
+							<div>ログイン中</div>
+						</div>
+						<a class="dropdown-item" th:href="@{/showOrderHistory}"><i class="fa fa-history text-dark"></i> 注文履歴</a> <a
+							class="dropdown-item" th:href="@{/config}"><i class="fa fa-cog text-dark"></i> 設定</a> <a
+							class="dropdown-item" th:href="@{/logout}"><i class="fa fa-sign-out text-dark"></i> ログアウト</a>
+					</div> <!-- ./dropdown-menu -->
 				</li>
-				<li class="nav-item" sec:authorize="hasRole('USER')"><a
-					th:href="@{/logout}" class="nav-link text-white">ログアウト</a></li>
+				<li class="nav-item"><a th:href="@{/showCartList}"
+					class="nav-link text-white">ショッピングカート <i
+						class="fa fa-shopping-cart fa-lg"></i></a></li>
+				<li class="nav-item" sec:authorize="hasRole('USER') == false">
+					<a th:href="@{/showLogin}" class="nav-link text-white">ログイン <i class="fa fa-sign-in fa-lg"></i></a>
+				</li>
 			</ul>
 		</div>
 	</nav>
 
 	<!-- カルーセル -->
-	<div id="carousel-indicators"
-		class="carousel slide carousel-fade mb-5" data-ride="carousel">
+	<div id="carousel-indicators" class="carousel slide carousel-fade mb-5"
+		data-ride="carousel">
 		<!-- インジケータの設定 -->
 		<ol class="carousel-indicators">
 			<li data-target="#carousel-indicators" data-slide-to="0"
@@ -80,7 +94,8 @@
 							class="card img-thumbnail mb-3 text-center shadow-sm border-0">
 							<a th:href="@{'/showItemDetail/?id=' + ${item.id}}"> <img
 								th:src="@{/img/} + ${item.imagePath}"
-								class="img-fluid rounded mb-2" style="height:auto;width:100%;">
+								class="img-fluid rounded mb-2"
+								style="height: auto; width: 100%;">
 							</a>
 							<div class="card-body pl-4 py-3 text-left">
 								<h6 class="card-title">

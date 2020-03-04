@@ -12,7 +12,7 @@ import org.springframework.security.core.GrantedAuthority;
 public class LoginUser extends org.springframework.security.core.userdetails.User{
 
 	private static final long serialVersionUID = 1L;
-	private final User user;
+	private User user;
 	
 	/**
 	 * 通常の管理者情報に加え、認可用ロールを設定する。
@@ -22,6 +22,10 @@ public class LoginUser extends org.springframework.security.core.userdetails.Use
 	 */
 	public LoginUser(User user, Collection<GrantedAuthority> authorityList) {
 		super(user.getEmail(), user.getPassword(), authorityList);
+		this.user = user;
+	}
+	
+	public void setUser(User user) {
 		this.user = user;
 	}
 

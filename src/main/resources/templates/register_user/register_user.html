@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+<link rel="icon" type="image/x-icon" th:href="@{/img/favicon.ico}">
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ラーメンのデリバリーのらくらく軒</title>
+<link rel="stylesheet"
+	href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+	integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+	crossorigin="anonymous">
+<link
+	href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+	rel="stylesheet">
+<link th:href="@{/css/noodle.css}" rel="stylesheet">
+<script type="text/javascript"
+	src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<script src="https://ajaxzip3.github.io/ajaxzip3.js" charset="UTF-8"></script>
+<script>
+	$(function() {
+		$('#searchAddress').click(function() {
+			AjaxZip3.zip2addr('zipcode', '', 'address', 'address');
+		});
+	});
+</script>
+</head>
+<body>
+	<!-- ナビゲーションバー -->
+	<nav class="navbar sticky-top navbar-expand-lg"
+		style="background-color: rgba(0, 0, 0, 0.9);">
+		<a class="navbar-brand" th:href="@{/}"><img id="logo"
+			alt="main log" th:src="@{/img/header_logo.png}" height="50"></a>
+		<button type="button" class="navbar-toggler" data-toggle="collapse"
+			data-target="#navbarNav" aria-controls="navbarNav"
+			aria-expanded="false" aria-label="ナビゲーションの切替">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+		<div class="collapse navbar-collapse" id="navbarNav">
+			<ul class="navbar-nav ml-auto">
+				<li class="nav-item dropdown" sec:authorize="hasRole('USER')">
+					<a href="#" class="nav-link text-white dropdown-toggle"
+					role="button" data-toggle="dropdown" id="navbarDropdownMenuLink"
+					aria-haspopup="true" aria-expanded="false">マイページ</a>
+					<div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+						<div class="dropdown-header text-center">
+							<img style="width: 60%; border-radius: 40px;"
+								th:src="@{/img/icon.jpg}">
+							<div>
+								<span sec:authentication="principal.user.name"></span><span>さん</span>
+							</div>
+							<div>ログイン中</div>
+						</div>
+						<a class="dropdown-item" th:href="@{/showOrderHistory}">注文履歴</a> <a
+							class="dropdown-item" th:href="@{/config}">設定</a> <a
+							class="dropdown-item" th:href="@{/logout}">ログアウト</a>
+					</div> <!-- ./dropdown-menu -->
+				</li>
+				<li class="nav-item"><a th:href="@{/showCartList}"
+					class="nav-link text-white">ショッピングカート</a></li>
+				<li class="nav-item" sec:authorize="hasRole('USER') == false">
+					<a th:href="@{/showLogin}" class="nav-link text-white">ログイン</a>
+				</li>
+			</ul>
+		</div>
+	</nav>
+
+	<div class="container my-5">
+
+		<!-- login form -->
+		<div class="row justify-content-sm-center">
+			<div
+				class="col-lg-offset-3 col-lg-6 col-md-offset-2 col-md-8 col-sm-10 col-xs-12">
+				<div class="card shadow-sm border-0">
+					<form method="post" class="card-body"
+						th:action="@{/registerUser/registerPreUser}"
+						th:object="${registerUserForm}">
+						<h4>ユーザ登録</h4>
+						<div class="alert alert-danger" role="alert" th:if="${isError}">
+							<div th:errors="*{name}" style="color: red;">エラーメッセージ</div>
+							<div th:errors="*{email}" style="color: red;">エラーメッセージ</div>
+							<div th:errors="*{zipcode}" style="color: red;">エラーメッセージ</div>
+							<div th:errors="*{address}" style="color: red;">エラーメッセージ</div>
+							<div th:errors="*{telephone}" style="color: red;">エラーメッセージ</div>
+							<div th:errors="*{password}" style="color: red;">エラーメッセージ</div>
+							<div th:errors="*{confirmationPassword}" style="color: red;">エラーメッセージ</div>
+						</div>
+						<div class="form-group">
+							<label for="inputName">名前:</label> <input type="text"
+								id="inputName" class="form-control" placeholder="名前を入力してください"
+								name="name" th:field="*{name}">
+						</div>
+						<div class="form-group">
+							<label for="inputEmail">メールアドレス:</label> <input type="text"
+								id="inputEmail" class="form-control"
+								placeholder="メールアドレスを入力してください" name="email" th:field="*{email}">
+						</div>
+						<div class="form-group">
+							<label for="inputZipcode">郵便番号:</label> <input type="text"
+								id="inputZipcode" class="form-control"
+								placeholder="半角数字のみで郵便番号を入力してください (例)1234567" name="zipcode"
+								th:field="*{zipcode}"> <input id="searchAddress"
+								class="btn btn-primary" type="button" value="住所検索"
+								style="margin-top: 10px;">
+						</div>
+						<div class="form-group">
+							<label for="inputAddress">住所:</label> <input type="text"
+								id="inputAddress" class="form-control" placeholder="住所を入力してください"
+								name="address" th:field="*{address}">
+						</div>
+						<div class="form-group">
+							<label for="inputTel">電話番号:</label> <input type="text"
+								id="inputTel" class="form-control"
+								placeholder="半角数字のみで電話番号を入力してください (例)0312345678"
+								name="telephone" th:field="*{telephone}">
+						</div>
+						<div class="form-group">
+							<label for="inputPassword">パスワード:</label> <input type="password"
+								id="inputPassword" class="form-control"
+								placeholder="パスワードを入力してください" name="password"
+								th:field="*{password}"> <span style="font-size: 8px;">【パスワード設定の注意事項】<br>
+								※ パスワードは英大文字・小文字、数字、記号の4種を含む8桁以上で設定してください。<br> ※
+								他社のサービスなどで用いているパスワードと同一のパスワードを設定しないでください。<br></span>
+						</div>
+						<div class="form-group">
+							<label for="inputConfirmationPassword">確認用パスワード:</label> <input
+								type="password" id="inputConfirmationPassword"
+								class="form-control" placeholder="パスワードを再度入力してください"
+								name="confirmationPassword" th:field="*{confirmationPassword}">
+						</div>
+						<div class="form-group">
+							<button type="submit" class="btn btn-primary">登録</button>
+							<button type="reset" class="btn btn-primary">クリア</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+
+	</div>
+	<!-- end container -->
+	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+		integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+		crossorigin="anonymous"></script>
+	<script
+		src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+		integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+		crossorigin="anonymous"></script>
+	<script
+		src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+		integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+		crossorigin="anonymous"></script>
+</body>
+</html>

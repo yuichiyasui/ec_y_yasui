@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ja" xmlns:th="http://thymeleaf.org"
 	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
@@ -65,23 +64,66 @@
 
 	<div class="container my-5">
 		<div class="row justify-content-sm-center">
-			<div class="card col-sm-10 shadow-sm border-0">
-				<div class="card-body text-center">
-					<h3 class="mt-2 mb-4">決済が完了しました！</h3>
-					<i class="fa fa-envelope-o fa-5x" style="color: #993300;"></i>
-					<p class="my-4">
-						この度はご注文ありがとうございます。<br>
-						注文内容の確認は注文完了のメールをお送りいたしましたのでそちらよりご確認ください。<br>
-						もしメールが届かない場合は「注文履歴」からご確認ください。
-					</p>
-					<a th:href="@{/}">
-						<button class="btn btn-info" type="button">トップ画面を表示する</button>
-					</a>
-				</div>
+			<div class="col-sm-12 text-center mb-4">
+				<h1>各種設定</h1>
+			</div>
+			<div class="row mb-3  justify-content-sm-center">
+				<form method="post" th:action="@{/config/showChangeInfo}"
+					class="card border-0 shadow-sm col-sm-3 text-center mx-3 p-0 mb-3">
+					<button type="submit" class="btn btn-outline-light">
+						<div class="card-body text-dark">
+							<i class="fa fa-user fa-5x" style="color: #993300;"></i>
+							<h6 class="card-title mt-4 text-info font-weight-bold">登録情報の変更</h6>
+							<p class="card-text">登録されている住所や電話番号などの登録情報を変更します。</p>
+						</div>
+					</button>
+				</form>
+				<form method="post" th:action="@{/config/showChangePassword}"
+					class="card border-0 shadow-sm col-sm-3 text-center mx-3 p-0 mb-3">
+					<button type="submit" class="btn btn-outline-light">
+						<div class="card-body text-dark">
+							<i class="fa fa-lock fa-5x" style="color: #993300;"></i>
+							<h6 class="card-title mt-4 text-info font-weight-bold">パスワードの変更</h6>
+							<p class="card-text">登録されているパスワードを変更します。</p>
+						</div>
+					</button>
+				</form>
+				<form method="post" th:action="@{/showOrderHistory}"
+					class="card border-0 shadow-sm col-sm-3 text-center mx-3 p-0 mb-3">
+					<button type="submit" class="btn btn-outline-light">
+						<div class="card-body text-dark">
+							<i class="fa fa-history fa-5x" style="color: #993300;"></i>
+							<h6 class="card-title mt-4 text-info font-weight-bold">購入履歴の確認</h6>
+							<p class="card-text">これまでにご購入いただいた商品をご確認いただけます。</p>
+						</div>
+					</button>
+				</form>
+				<form method="post" th:action="@{/config/showContact}"
+					class="card border-0 shadow-sm col-sm-3 text-center mx-3 p-0 mb-3">
+					<button type="submit" class="btn btn-outline-light">
+						<div class="card-body text-dark">
+							<i class="fa fa-paper-plane-o fa-5x" style="color: #993300;"></i>
+							<h6 class="card-title mt-4 text-info font-weight-bold">お問合せ</h6>
+							<p class="card-text">サービスについてのお問合せの際はこちらのフォームから行います。</p>
+						</div>
+					</button>
+				</form>
+				<form method="post" th:action="@{/config/showWithdraw}"
+					class="card border-0 shadow-sm col-sm-3 text-center mx-3 p-0 mb-3">
+					<button type="submit" class="btn btn-outline-light">
+						<div class="card-body text-dark">
+							<i class="fa fa-hand-peace-o fa-5x" style="color: #993300;"></i>
+							<h6 class="card-title mt-4 text-info font-weight-bold">会員登録解除</h6>
+							<p class="card-text">本サービスのユーザーを退会します。</p>
+						</div>
+					</button>
+				</form>
+				<div class="col-sm-3 mx-3 mb-3"></div>
 			</div>
 		</div>
 	</div>
-	<!-- end container -->
+	<!-- /.container -->
+
 	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
 		integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
 		crossorigin="anonymous"></script>

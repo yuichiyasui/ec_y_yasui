@@ -14,6 +14,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.noodle.common.EnvironmentsConfiguration;
 import com.noodle.domain.LoginUser;
 import com.noodle.service.LoginService;
 
@@ -26,11 +27,8 @@ import com.noodle.service.LoginService;
 @Controller
 public class LoginController {
 
-	/** URLのドメイン */
-	// TODO [ec_y_yasui]デプロイ時に変更
-//	private final String URL_DOMAIN = "http://localhost:8080";
-	private final String URL_DOMAIN = "https://ramen-d.herokuapp.com";
-	
+	@Autowired
+	private EnvironmentsConfiguration envConfig;
 	@Autowired
 	private LoginService loginService;
 	@Autowired
@@ -51,9 +49,10 @@ public class LoginController {
 	@RequestMapping("/showLogin")
 	public String showLogin() throws ServletException, IOException {
 		try {
-			if (request.getHeader("REFERER").equals(URL_DOMAIN + "/showRegisterUser")
-					|| request.getHeader("REFERER").equals(URL_DOMAIN + "/registerUser")) {
-				// ログイン画面に遷移前のページがユーザー登録画面かユーザー登録処理のパスであれば何もしない
+			if (request.getHeader("REFERER").equals(envConfig.getUrl() + "/showRegisterUser")
+					|| request.getHeader("REFERER").equals(envConfig.getUrl() + "/registerUser")
+					|| request.getHeader("REFERER").equals(envConfig.getUrl() + "/showLogin")) {
+				// ログイン画面に遷移前のページがユーザー登録画面かユーザー登録処理のパス、ログイン画面であれば何もしない
 			} else {
 				// ログイン画面に遷移前のページが上記以外ならセッションスコープに遷移前のページ情報を格納
 				session.setAttribute("referer", request.getHeader("REFERER"));
@@ -76,29 +75,29 @@ public class LoginController {
 	@RequestMapping("/loginSuccess")
 	public String loginSuccess(@AuthenticationPrincipal LoginUser loginUser) throws ServletException, IOException {
 		Integer userId = loginUser.getUser().getId();
+		LOGGER.info("ユーザーID:"+userId+"がログインしました");
 		Integer preUserId = (Integer) session.getAttribute("userId");
-		if (loginService.isCheckOrderExist(userId) == false) {
-			// ログインしたユーザーが注文前の注文情報を保持していない場合
-			loginService.createNewOrderWhenLogin(userId);
-		}
-		if (preUserId != null) { // ログイン前に商品を追加していないとpreIdはnullになる
-			// ログイン前に注文がある場合
-			loginService.updateOrderItemsOrderId(userId, preUserId);
-			loginService.deleteOrder(preUserId);
-			LOGGER.info("ログイン前の注文情報をログインユーザーに移行しました");
+		if (preUserId != null && loginService.isCheckOrderExist(preUserId)) {
+				/** パターン1: ログイン前に仮IDでカートに商品を追加している場合 */
+				loginService.updateOrderItemsOrderId(userId, preUserId);				
+		} else {
+			/** パターン2: ログイン前に仮IDでカートに追加していない場合 */
+			// 何もしない(addToCartServiceに任せる)
+			LOGGER.info("ログイン前の注文情報はありませんでした");
 		}
 		// ログイン画面に遷移前のページのURLをパスだけ切り出す
 		String pathBeforeLoginPage;
 		try {
-			pathBeforeLoginPage = session.getAttribute("referer").toString().replace(URL_DOMAIN, "");
+			pathBeforeLoginPage = session.getAttribute("referer").toString().replace(envConfig.getUrl(), "");
 		} catch (Exception e) {
-			e.printStackTrace();
+			LOGGER.debug("リファラー情報が参照できませんでした");
 			return "forward:/";
 		}
-		if(pathBeforeLoginPage.equals("/showCartList")) {
+		if (pathBeforeLoginPage.equals("/showCartList")) {
 			// ログイン前の画面がショッピングカート画面であった場合、注文確認画面に遷移させる
 			pathBeforeLoginPage = "/showOrderConfirm";
-			return "forward:"+ pathBeforeLoginPage + "?userId=" + userId;
+			LOGGER.info("ログイン前の画面がショッピングカートだったので注文確認画面に遷移します");
+			return "forward:" + pathBeforeLoginPage + "?userId=" + userId;
 		}
 		// リファラ情報を削除
 		session.removeAttribute("referer");

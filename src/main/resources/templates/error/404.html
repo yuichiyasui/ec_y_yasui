@@ -1,11 +1,92 @@
 <!DOCTYPE html>
-<html lang="ja" xmlns:th="http://thymeleaf.org">
+<html lang="ja" xmlns:th="http://thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
+<link rel="icon" type="image/x-icon" th:href="@{/img/favicon.ico}">
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>お探しのページは見つかりませんでした</title>
+<link rel="stylesheet"
+	href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+	integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+	crossorigin="anonymous">
+<link
+	href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+	rel="stylesheet">
+<link th:href="@{/css/noodle.css}" rel="stylesheet">
+<script type="text/javascript"
+	src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
 </head>
 <body>
-<h1>Not Found 404</h1>
-
+	<!-- ナビゲーションバー -->
+	<nav class="navbar sticky-top navbar-expand-lg"
+		style="background-color: rgba(0, 0, 0, 0.9);">
+		<a class="navbar-brand" th:href="@{/}"><img id="logo"
+			alt="main log" th:src="@{/img/header_logo.png}" height="50"></a>
+		<button type="button" class="navbar-toggler" data-toggle="collapse"
+			data-target="#navbarNav" aria-controls="navbarNav"
+			aria-expanded="false" aria-label="ナビゲーションの切替">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+		<div class="collapse navbar-collapse" id="navbarNav">
+			<ul class="navbar-nav ml-auto">
+				<li class="nav-item dropdown" sec:authorize="hasRole('USER')">
+					<a href="#" class="nav-link text-white dropdown-toggle"
+					role="button" data-toggle="dropdown" id="navbarDropdownMenuLink"
+					aria-haspopup="true" aria-expanded="false">マイページ</a>
+					<div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+						<div class="dropdown-header text-center">
+							<i class="fa fa-user-circle fa-5x mb-1"></i>
+							<div>
+								<span sec:authentication="principal.user.name"></span><span>さん</span>
+							</div>
+							<div>ログイン中</div>
+						</div>
+						<a class="dropdown-item" th:href="@{/showOrderHistory}"><i
+							class="fa fa-history text-dark"></i> 注文履歴</a> <a
+							class="dropdown-item" th:href="@{/config}"><i
+							class="fa fa-cog text-dark"></i> 設定</a> <a class="dropdown-item"
+							th:href="@{/logout}"><i class="fa fa-sign-out text-dark"></i>
+							ログアウト</a>
+					</div> <!-- ./dropdown-menu -->
+				</li>
+				<li class="nav-item"><a th:href="@{/showCartList}"
+					class="nav-link text-white">ショッピングカート <i
+						class="fa fa-shopping-cart fa-lg"></i></a></li>
+				<li class="nav-item" sec:authorize="hasRole('USER') == false">
+					<a th:href="@{/showLogin}" class="nav-link text-white">ログイン <i
+						class="fa fa-sign-in fa-lg"></i></a>
+				</li>
+			</ul>
+		</div>
+	</nav>
+	<div class="container my-5">
+		<div class="row justify-content-sm-center">
+			<div class="card col-sm-10 shadow-sm border-0">
+				<div class="card-body text-center">
+					<h1 class="my-3">Not Found 404</h1>
+					<h4>お探しのページは見つかりませんでした。</h4>
+					<img style="height: 39vh;" th:src="@{/img/error_img.jpg}">
+					<p class="mb-5">
+						あなたがアクセスしようとしたページは削除されたか<br> URLが変更されているため、見つけることができませんでした。
+					</p>
+					<a th:href="@{/}">
+						<button class="btn btn-warning text-white mb-3" type="button">トップに戻る</button>
+					</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+		integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+		crossorigin="anonymous"></script>
+	<script
+		src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+		integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+		crossorigin="anonymous"></script>
+	<script
+		src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+		integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+		crossorigin="anonymous"></script>
 </body>
 </html>

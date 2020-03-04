@@ -57,17 +57,17 @@ public class AddToCartService {
 			/** ログインしている場合 */
 			userId = loginUser.getUser().getId();
 		} catch (Exception e) {
-			LOGGER.info("ログインしていないユーザーに仮ユーザーIDを発行しました");
 			/** ログインしていない場合 */
 			// セッションIDを10進数に変換
 			BigInteger decSessionId = new BigInteger(session.getId(), 16);
 			// int型に変換
 			userId = decSessionId.intValue();
+			LOGGER.info("ログインしていないユーザーに仮ユーザーID:" + userId + "を発行しました");
 		}
 		// UserIdで検索して注文前のオーダーが作成されているか確認
 		Order order;
-		if (orderRepository.findByUserIdAndStatus(userId) == null) {
-			// オーダーがなかったらOrderオブジェクトを生成
+		if (orderRepository.findByUserIdAndStatus(userId, 0) == null) {
+			/** オーダーがなかったらOrderオブジェクトを生成 */
 			order = new Order();
 			order.setUserId(userId);
 			order.setStatus(0);
@@ -75,14 +75,14 @@ public class AddToCartService {
 			orderRepository.insert(order);
 			LOGGER.info("ユーザーID:" + userId + "の注文を新規に作成しました");
 		} else {
-			// オーダーが既に存在したらそれをとってくる
-			order = orderRepository.findByUserIdAndStatus(userId);
+			/** オーダーが既に存在したらそれをとってくる */
+			order = orderRepository.findByUserIdAndStatus(userId, 0);
 			LOGGER.info("ユーザーID:" + userId + "の注文が既に存在したので既存の注文に追加します");
 		}
 		OrderItem orderItem = new OrderItem();
 		orderItem.setItemId(form.getItemId());
 		// 注文IDを取得してセット
-		int orderId = orderRepository.findIdByUserIdAndStatus(order.getUserId());
+		int orderId = orderRepository.findByUserIdAndStatus(order.getUserId(),0).getId();
 		orderItem.setOrderId(orderId);
 		orderItem.setQuantity(form.getQuantity());
 		orderItem.setSize(form.getSize());

@@ -2,14 +2,18 @@
 <html lang="ja" xmlns:th="http://thymeleaf.org"
 	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
+<link rel="icon" type="image/x-icon" th:href="@{/img/favicon.ico}">
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ピザ屋のネット注文</title>
+<title>ラーメンのデリバリーのらくらく軒</title>
 <link rel="stylesheet"
 	href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
 	integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
 	crossorigin="anonymous">
+<link
+	href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+	rel="stylesheet">
 <link th:href="@{/css/noodle.css}" rel="stylesheet">
 <script type="text/javascript"
 	src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
@@ -27,142 +31,123 @@
 		</button>
 		<div class="collapse navbar-collapse" id="navbarNav">
 			<ul class="navbar-nav ml-auto">
-				<li class="nav-item nav-link text-white"
-					sec:authorize="hasRole('USER')"><span
-					sec:authentication="principal.user.name"></span>さん&nbsp;こんにちは！</li>
-				<li class="nav-item"><a th:href="@{/showCartList}"
-					class="nav-link text-white">ショッピングカート</a></li>
-				<li class="nav-item"><a th:href="@{/showOrderHistory}"
-					class="nav-link text-white">注文履歴</a></li>
-				<li class="nav-item" sec:authorize="hasRole('USER') == false">
-					<a th:href="@{/showLogin}" class="nav-link text-white">ログイン</a>
+				<li class="nav-item dropdown" sec:authorize="hasRole('USER')">
+					<a href="#" class="nav-link text-white dropdown-toggle"
+					role="button" data-toggle="dropdown" id="navbarDropdownMenuLink"
+					aria-haspopup="true" aria-expanded="false">マイページ</a>
+					<div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+						<div class="dropdown-header text-center">
+							<i class="fa fa-user-circle fa-5x mb-1"></i>
+							<div>
+								<span sec:authentication="principal.user.name"></span><span>さん</span>
+							</div>
+							<div>ログイン中</div>
+						</div>
+						<a class="dropdown-item" th:href="@{/showOrderHistory}"><i
+							class="fa fa-history text-dark"></i> 注文履歴</a> <a
+							class="dropdown-item" th:href="@{/config}"><i
+							class="fa fa-cog text-dark"></i> 設定</a> <a class="dropdown-item"
+							th:href="@{/logout}"><i class="fa fa-sign-out text-dark"></i>
+							ログアウト</a>
+					</div> <!-- ./dropdown-menu -->
 				</li>
-				<li class="nav-item" sec:authorize="hasRole('USER')"><a
-					th:href="@{/logout}" class="nav-link text-white">ログアウト</a></li>
+				<li class="nav-item"><a th:href="@{/showCartList}"
+					class="nav-link text-white">ショッピングカート <i
+						class="fa fa-shopping-cart fa-lg"></i></a></li>
+				<li class="nav-item" sec:authorize="hasRole('USER') == false">
+					<a th:href="@{/showLogin}" class="nav-link text-white">ログイン <i
+						class="fa fa-sign-in fa-lg"></i></a>
+				</li>
 			</ul>
 		</div>
 	</nav>
 
-	<div class="container">
-		<!-- table -->
-		<div class="row">
+	<div class="container my-5">
+		<div class="row justify-content-sm-center">
+			<div class="col-sm-12">
+				<h3 class="text-center mb-4">注文履歴</h3>
+			</div>
+			<div th:if="${orderList}"
+				class="col-sm-10 card shadow-sm border-0 px-0 mb-4"
+				th:each="order:${orderList}">
+				<div class="card-header">
+					<div class="row">
+						<div class="col-sm-2">
+							<small class="d-block">ご注文日</small> <span
+								th:text="${order.orderDate}"></span>
+						</div>
+						<div class="col-sm-2">
+							<small class="d-block">合計</small> <span
+								th:text="'¥'+${#numbers.formatInteger(order.totalPrice, 1, 'COMMA')}"></span>
+						</div>
+						<div class="col-sm-6">
+							<small class="d-block">お届け先</small> <span
+								th:text="${order.destinationAddress}"></span>
+						</div>
+						<div class="col-sm-2 text-right">
+							<small class="d-block">ご注文ID</small> <span th:text="${order.id}"></span>
+						</div>
+					</div>
+				</div>
+				<div class="card-body">
+					<div class="mb-3">
+						お届け日時：<span
+							th:text="${#dates.format(order.deliveryTime,'yyyy年MM月dd日 HH時mm分')}"></span>
+					</div>
+
+					<div class="row py-4 border-top"
+						th:each="orderItem:${order.orderItemList}">
+						<div class="col-sm-3 my-auto">
+							<img style="width: 100%;" class="img-fluid rounded"
+								th:src="@{/img/} + ${orderItem.item.imagePath}">
+						</div>
+						<div class="col-sm-5">
+							<h5 class="mb-0">
+								<a th:href="@{'/showItemDetail/?id=' + ${orderItem.item.id}}"><span
+									class="text-dark" th:text="${orderItem.item.name}"></span></a>
+							</h5>
+							<small class="text-danger" th:if="${orderItem.size} == 'M'"
+								th:text="'¥'+${#numbers.formatInteger(orderItem.getSubTotal(), 2, 'COMMA')}"></small>
+							<small class="text-danger" th:if="${orderItem.size} == 'L'"
+								th:text="'¥'+${#numbers.formatInteger(orderItem.getSubTotal(), 2, 'COMMA')}"></small>
+							<div>
+								<small> サイズ：<span th:text="${orderItem.size}"></span>
+								</small>
+							</div>
+							<div>
+								<small>数量：<span th:text="${orderItem.quantity}"></span>個
+								</small>
+							</div>
+							<div>
+								<small>トッピング：</small> <small
+									th:each="orderTopping:${orderItem.orderToppingList}"> <span
+									th:if="${orderTopping.topping.name} != null"
+									th:text="${orderTopping.topping.name}+ ' '">チャーシュー </span> <span
+									th:if="${orderTopping.topping.name} == null" th:text="'なし'"></span>
+								</small>
+							</div>
+						</div>
+						<div class="offset-sm-2 col-sm-2 text-right my-auto">
+							<a th:href="@{'/showItemDetail/?id=' + ${orderItem.item.id}}">
+								<button class="btn btn-outline-info">再注文する</button>
+							</a>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- 参照できる注文履歴がない場合 -->
+		</div>
+		<div class="text-center" th:if="${orderList.size()==0}">
 			<div
-				class="table-responsive col-lg-offset-1 col-lg-10 col-md-offset-1 col-md-10 col-sm-10 col-xs-12">
-				<h3 class="text-center">注文履歴</h3>
-				<table class="table table-striped">
-					<tbody>
-						<tr>
-							<th>
-								<div class="text-center">商品名</div>
-							</th>
-							<th>
-								<div class="text-center">サイズ、価格(税抜)、数量</div>
-							</th>
-							<th>
-								<div class="text-center">トッピング、価格(税抜)</div>
-							</th>
-							<th>
-								<div class="text-center">小計</div>
-							</th>
-							<th></th>
-						</tr>
-						<tr>
-							<td>
-								<div class="center">
-									<img src="img/1.jpg" class="img-responsive img-rounded"
-										width="100" height="300"><br> じゃがバターベーコン
-								</div>
-							</td>
-							<td><span class="price">&nbsp;Ｌ</span>&nbsp;&nbsp;2,380円
-								&nbsp;&nbsp;1個</td>
-							<td>
-								<ul>
-									<li>ピーマン300円</li>
-									<li>オニオン300円</li>
-									<li>あらびきソーセージ300円</li>
-								</ul>
-							</td>
-							<td>
-								<div class="text-center">3,280円</div>
-							</td>
-							<td>
-								<div class="text-center">
-									<button type="submit" class="btn btn-primary">削除</button>
-								</div>
-							</td>
-						</tr>
-						<tr>
-							<td>
-								<div class="center">
-									<img src="img/1.jpg" class="img-responsive img-rounded"
-										width="100" height="300"><br> じゃがバターベーコン
-								</div>
-							</td>
-							<td><span class="price">&nbsp;Ｌ</span>&nbsp;&nbsp;2,380円
-								&nbsp;&nbsp;1個</td>
-							<td>
-								<ul>
-									<li>ピーマン300円</li>
-									<li>オニオン300円</li>
-									<li>あらびきソーセージ300円</li>
-								</ul>
-							</td>
-							<td>
-								<div class="text-center">3,280円</div>
-							</td>
-							<td>
-								<div class="text-center">
-									<button type="submit" class="btn btn-primary">削除</button>
-								</div>
-							</td>
-						</tr>
-						<tr>
-							<td>
-								<div class="center">
-									<img src="img/1.jpg" class="img-responsive img-rounded"
-										width="100" height="300"><br> じゃがバターベーコン
-								</div>
-							</td>
-							<td><span class="price">&nbsp;Ｌ</span>&nbsp;&nbsp;2,380円
-								&nbsp;&nbsp;1個</td>
-							<td>
-								<ul>
-									<li>ピーマン300円</li>
-									<li>オニオン300円</li>
-									<li>あらびきソーセージ300円</li>
-								</ul>
-							</td>
-							<td>
-								<div class="text-center">3,280円</div>
-							</td>
-							<td>
-								<div class="text-center">
-									<button type="submit" class="btn btn-primary">削除</button>
-								</div>
-							</td>
-						</tr>
-					</tbody>
-				</table>
+				class="alert alert-light col-sm-12 text-dark shadow-sm border-0 py-4"
+				role="alert">
+				<div>参照可能な注文情報がありません</div>
 			</div>
-		</div>
-
-		<div class="row">
-			<div class="col-xs-offset-2 col-xs-8">
-				<div class="form-group text-center">
-					<span id="total-price">消費税：8,000円</span><br> <span
-						id="total-price">ご注文金額合計：38,000円 (税込)</span>
-				</div>
-			</div>
-		</div>
-
-		<div class="row">
-			<div class="col-xs-offset-5 col-xs-3">
-				<div class="form-group">
-					<form action="order_confirm.html">
-						<input class="form-control btn btn-warning btn-block"
-							type="submit" value="注文に進む">
-					</form>
-				</div>
+			<div class="mt-4">
+				<a th:href="@{/}">
+					<button class="btn btn-info" type="button">商品一覧ページに戻る</button>
+				</a>
 			</div>
 		</div>
 	</div>

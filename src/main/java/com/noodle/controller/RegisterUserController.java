@@ -20,6 +20,7 @@ import com.noodle.service.RegisterUserService;
  *
  */
 @Controller
+@RequestMapping("/registerUser")
 public class RegisterUserController {
 
 	@Autowired
@@ -44,16 +45,24 @@ public class RegisterUserController {
 	 */
 	@RequestMapping("/showRegisterUser")
 	public String showRegisterUser() {
-		return "register_user.html";
+		return "register_user/register_user.html";
 	}
 	
 	/**
-	 * ユーザー登録処理を行うメソッド.
-	 * @param form register_user.htmlから受け取ったリクエストパラメータ
-	 * @return ログイン画面 / ユーザ登録画面
+	 * @return
 	 */
-	@RequestMapping("/registerUser")
-	public String registerUser(
+	@RequestMapping("/mailSent")
+	public String mailSent() {
+		return "register_user/mail_sent.html";
+	}
+	
+	/**
+	 * 仮ユーザー登録処理を行うメソッド.
+	 * @param form register_user.htmlから受け取ったリクエストパラメータ
+	 * @return 登録確認メール送信完了画面 / ユーザ登録画面
+	 */
+	@RequestMapping("/registerPreUser")
+	public String registerPreUser(
 			@Validated RegisterUserForm form,
 			BindingResult result,
 			Model model
@@ -68,7 +77,7 @@ public class RegisterUserController {
 		if(!(form.getPassword().equals(form.getConfirmationPassword()))) {
 			result.rejectValue("confirmationPassword","", "*パスワードが一致しません");
 			model.addAttribute("isError","*エラーがあります");
-			LOGGER.info("パスワードの一致しませんでした");
+			LOGGER.info("パスワードが一致しませんでした");
 		}
 		// 条件3：上記以外にエラーがないかチェック
 		if(result.hasErrors()) {
@@ -77,9 +86,30 @@ public class RegisterUserController {
 			return showRegisterUser();
 		}
 		// 条件4：何もエラーがない場合
-		registerUserService.RegisterUser(form);
-		LOGGER.info("ユーザー登録が完了しました");
-		return "redirect:/showLogin";
+		registerUserService.RegisterPreUser(form);
+		LOGGER.info("仮ユーザー登録が完了しました");
+		return "redirect:/registerUser/mailSent";
 	}
+	
+	/**
+	 * 本ユーザー登録処理を行うメソッド.
+	 * @param id メールから受け取るUUID
+	 * @return 登録完了画面へリダイレクト
+	 */
+	@RequestMapping("/register")
+	public String register(String id) {
+		registerUserService.registerUser(id);
+		return "redirect:/registerUser/complete";
+	}
+	
+	/**
+	 * 登録完了画面を表示するメソッド.
+	 * @return
+	 */
+	@RequestMapping("/complete")
+	public String complete() {
+		return "register_user/complete.html";
+	}
+	
 	
 }

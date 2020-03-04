@@ -21,6 +21,7 @@ import com.noodle.service.ShowCartListService;
 
 /**
  * カートを表示する、商品を追加する、削除する処理を行うコントローラクラス.
+ * 
  * @author yuichi
  *
  */
@@ -35,13 +36,14 @@ public class ShoppingCartController {
 	private DeleteCartItemService deleteCartItemService;
 	@Autowired
 	private HttpSession session;
-	
+
 	/** ロギング処理 */
 	private static final Logger LOGGER = LoggerFactory.getLogger(ShoppingCartController.class);
-	
+
 	/**
 	 * カートに追加してショピングカートを表示するメソッド.
-	 * @param form item_detail.htmlから受け取ったリクエストパラメータ
+	 * 
+	 * @param form  item_detail.htmlから受け取ったリクエストパラメータ
 	 * @param model リクエストスコープ
 	 * @return ショッピングカート画面
 	 */
@@ -49,24 +51,22 @@ public class ShoppingCartController {
 	public String addToCart(OrderItemForm form, @AuthenticationPrincipal LoginUser loginUser) {
 		// 注文を作成して商品を追加して、作成した注文のユーザーIDを取得する
 		Integer userId = addToCartService.addToCart(form, loginUser);
-		/* ログインした際に、仮IDを基に注文情報を取得して
-		 * 本IDに書き換える為にセッションスコープに格納しておく 
+		/*
+		 * ログインした際に、仮IDを基に注文情報を取得して 本IDに書き換える為にセッションスコープに格納しておく
 		 */
 		session.setAttribute("userId", userId);
 		return "redirect:/showCartList";
 	}
-	
+
 	/**
 	 * カートを表示するメソッド.
+	 * 
 	 * @param loginUser ログインユーザー情報
-	 * @param model　リクエストスコープ
+	 * @param model     リクエストスコープ
 	 * @return ショッピングカート画面
 	 */
 	@RequestMapping("/showCartList")
-	public String showCartList(
-			@AuthenticationPrincipal LoginUser loginUser,
-			Model model
-			) {
+	public String showCartList(@AuthenticationPrincipal LoginUser loginUser, Model model) {
 		Integer userId;
 		if (loginUser != null) {
 			// ログインしている場合の処理
@@ -78,9 +78,8 @@ public class ShoppingCartController {
 			// カートに商品が追加されていなくてログインしていない場合
 			// 仮IDを発行
 			userId = new BigInteger(session.getId(), 16).hashCode();
-			/* ログインした際に、仮IDを基に注文情報を取得して
-			 * 本IDに書き換える為にセッションスコープに格納しておく 
-			 */
+			/** ログインした際に、仮IDを基に注文情報を取得して
+			 * 本IDに書き換える為にセッションスコープに格納しておく */
 			session.setAttribute("userId", userId);
 		}
 		Order order;
@@ -99,33 +98,17 @@ public class ShoppingCartController {
 		}
 		return "cart_list.html";
 	}
-	
+
 	/**
-	 * カートの商品を削除してショッピングカートを表示するメソッド.
-	 * @param id 注文商品ID
+	 * カートの商品を削除するメソッド.
+	 * 
+	 * @param orderItemId 注文商品ID
 	 * @return ショッピングカート画面
 	 */
 	@RequestMapping("/deleteCartItem")
-	public String deleteItem(Integer userId,Integer orderItemId,
-			Model model) {
-		// 削除処理
+	public String deleteItem(Integer orderItemId, Model model) {
 		deleteCartItemService.deleteOrderItemAndOrderToppingById(orderItemId);
-		// 表示処理
-		Order order;
-		try {
-			order = showCartListService.showCartList(userId);
-		} catch (Exception e) {
-			LOGGER.info("注文商品が空になりました");
-			order = null;
-		}
-		if (order == null || order.getOrderItemList() == null) {
-			// 注文が存在していないか、注文はあるが注文商品がない場合
-			model.addAttribute("message", "カートの中身が空です。");
-		} else {
-			// 注文と注文商品が存在している場合
-			model.addAttribute("order", order);
-		}
 		return "redirect:/showCartList";
 	}
-	
+
 }

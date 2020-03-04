@@ -4,13 +4,9 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 
-/**
- * register_user.htmlからパラメータを受け取るフォームクラス.
- * 
- * @author yuichi
- *
- */
-public class RegisterUserForm {
+public class ChangeInfoForm {
+	/**	ID */
+	private Integer id;
 	/** ユーザー名 */
 	@NotBlank(message = "*名前の入力は必須です")
 	private String name;
@@ -29,15 +25,13 @@ public class RegisterUserForm {
 	@Pattern(regexp = "^[0-9]*$", message = "*半角数字で入力してください")
 	@NotBlank(message = "*電話番号を入力して下さい")
 	private String telephone;
-	/** パスワード */
-	// 英大文字・小文字+数字+記号の4種を含む8桁以上
-	@Pattern(regexp = "^(?=.*?[a-z])(?=.*?[A-Z])(?=.*?[0-9])(?=.*[!\\x22\\#$%&@'()*+,\\-./_])[A-Za-z0-9!\\x22\\#$%&@'()*+,\\-./_]{8,}$", message = "*パスワードは英大文字・小文字、数字、記号の4種を含む8桁以上で設定してください")
-	@NotBlank(message = "*パスワードの入力は必須です")
-	private String password;
-	/** 確認用パスワード */
-	@NotBlank(message = "*確認用パスワードの入力は必須です")
-	private String confirmationPassword;
 
+	public Integer getId() {
+		return id;
+	}
+	public void setId(Integer id) {
+		this.id = id;
+	}
 	public String getName() {
 		return name;
 	}
@@ -67,23 +61,5 @@ public class RegisterUserForm {
 	}
 	public void setTelephone(String telephone) {
 		this.telephone = telephone;
-	}
-	public String getPassword() {
-		return password;
-	}
-	public void setPassword(String password) {
-		this.password = password;
-	}
-	public String getConfirmationPassword() {
-		return confirmationPassword;
-	}
-	public void setConfirmationPassword(String confirmationPassword) {
-		this.confirmationPassword = confirmationPassword;
-	}
-	@Override
-	public String toString() {
-		return "RegisterUserForm [name=" + name + ", email=" + email + ", zipcode=" + zipcode + ", address=" + address
-				+ ", telephone=" + telephone + ", password=" + password + ", confirmationPassword="
-				+ confirmationPassword + "]";
 	}
 }

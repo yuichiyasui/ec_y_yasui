@@ -63,10 +63,6 @@ public class OrderRepository {
 		List<OrderItem> orderItemList = null;
 		int preOrderId = 0;
 		int preOrderItemId = 0;
-		// ログで商品情報の取得の実行回数を表示する用
-		int orderItemCount = 0;
-		// ログでトッピング情報の取得の実行回数を表示する用
-		int orderToppingCount = 0;
 		while (rs.next()) {
 			// Orderオブジェクトの作成(前回とidが重複しなければ実行)
 			if (preOrderId != rs.getInt("o_id")) {
@@ -87,7 +83,6 @@ public class OrderRepository {
 				order.setOrderItemList(orderItemList);
 				preOrderId = rs.getInt("o_id");
 				orderList.add(order);
-				LOGGER.info("注文ID:" + order.getId() + "の注文情報を取得しました");
 			}
 			// OrderItemオブジェクトの作成(前回とidが重複しなければ実行)
 			if (preOrderItemId != rs.getInt("oi_id")) {
@@ -112,9 +107,6 @@ public class OrderRepository {
 				orderItem.setOrderToppingList(orderToppingList);
 				orderItemList.add(orderItem);
 				preOrderItemId = rs.getInt("oi_id");
-				// カウンター
-				orderItemCount++;
-				LOGGER.info(orderItemCount + "件目の注文商品情報を取得しました");
 			}
 			// OrderToppingオブジェクトの作成
 			OrderTopping orderTopping = new OrderTopping();
@@ -129,9 +121,6 @@ public class OrderRepository {
 			topping.setPriceL(rs.getInt("top_price_l"));
 			orderTopping.setTopping(topping);
 			orderToppingList.add(orderTopping);
-			// カウンター
-			orderToppingCount++;
-			LOGGER.info(orderToppingCount + "件目の注文トッピング情報を取得しました");
 		}
 		return orderList;
 	};
@@ -147,18 +136,32 @@ public class OrderRepository {
 		template.update(sql, param);
 	}
 
+
 	/**
-	 * ユーザーIDとステータス0(注文前)でオーダー情報を取得するメソッド.
+	 * 注文情報を挿入してその挿入した注文情報を返すメソッド.
+	 * @param order 挿入する注文情報
+	 * @return 挿入した注文情報
+	 */
+	public Order insertWithReturnOrder(Order order) {
+		String sql = "INSERT INTO orders(user_id,status,total_price) VALUES(:userId,:status,:totalPrice) RETURNING id,user_id,status,total_price,order_date,"
+				+ "destination_name,destination_email,destination_zipcode,"
+				+ "destination_address,destination_tel,delivery_time,payment_method";
+		SqlParameterSource param = new BeanPropertySqlParameterSource(order);
+		return template.queryForObject(sql, param, ORDER_ROW_MAPPER);
+	}
+
+	/**
+	 * ユーザーIDとステータスでオーダー情報を取得するメソッド.
 	 * 
 	 * @param userId ユーザーID
 	 * @return オーダー情報
 	 */
-	public Order findByUserIdAndStatus(Integer userId) {
+	public Order findByUserIdAndStatus(Integer userId, int status) {
 		String sql = "SELECT id,user_id,status,total_price,order_date,"
 				+ "destination_name,destination_email,destination_zipcode,"
 				+ "destination_address,destination_tel,delivery_time,payment_method "
-				+ "FROM orders WHERE user_id=:user_id AND status=0";
-		SqlParameterSource param = new MapSqlParameterSource().addValue("user_id", userId);
+				+ "FROM orders WHERE user_id=:user_id AND status=:status";
+		SqlParameterSource param = new MapSqlParameterSource().addValue("user_id", userId).addValue("status", status);
 		Order order;
 		try {
 			order = template.queryForObject(sql, param, ORDER_ROW_MAPPER);
@@ -170,29 +173,7 @@ public class OrderRepository {
 	}
 
 	/**
-	 * ユーザーIDとステータス0(注文前)でオーダーIDを取得するメソッド. 利用されるクラス:AddToCartService
-	 * 
-	 * @param userId ユーザーID
-	 * @return オーダーID
-	 */
-	public int findIdByUserIdAndStatus(Integer userId) {
-		StringBuilder sql = new StringBuilder();
-		sql.append("SELECT id,user_id,status,total_price,order_date,");
-		sql.append("destination_name,destination_email,destination_zipcode,");
-		sql.append("destination_address,destination_tel,delivery_time,payment_method ");
-		sql.append("FROM orders WHERE user_id=:user_id AND status=0");
-		SqlParameterSource param = new MapSqlParameterSource().addValue("user_id", userId);
-		try {
-			Order order = template.queryForObject(sql.toString(), param, ORDER_ROW_MAPPER);
-			return order.getId();			
-		}catch(Exception e) {
-			LOGGER.info("ユーザーID:"+ userId +"にはログイン前の注文情報はありませんでした");
-			return 0;
-		}
-	}
-
-	/**
-	 * 主キーで注文情報を取得するメソッド. 利用されるクラス:
+	 * 主キーで注文情報を取得するメソッド. 利用されるクラス:ReceiveOrderService
 	 * 
 	 * @param id 注文ID
 	 * @return 注文情報
@@ -221,12 +202,14 @@ public class OrderRepository {
 	}
 
 	/**
-	 * ユーザーIDとステータス0で注文情報を取得するメソッド. 利用されるクラス:ShowCartListService
+	 * ユーザーIDとステータスで注文情報を取得するメソッド. 利用されるクラス:ShowCartListService,
+	 * ShowOrderHistoryService
 	 * 
 	 * @param userId ユーザーID
-	 * @return 注文情報
+	 * @param status 注文ステータス
+	 * @return 注文情報のリスト
 	 */
-	public Order findOrderByUserIdAndStatus(Integer userId) {
+	public List<Order> findOrderByUserIdAndStatus(Integer userId, Integer status) {
 		StringBuilder sql = new StringBuilder();
 		sql.append("SELECT o.id AS o_id,o.user_id AS o_user_id,o.status AS o_status,");
 		sql.append("o.total_price AS o_total_price, o.order_date AS o_order_date,");
@@ -244,11 +227,19 @@ public class OrderRepository {
 		sql.append("LEFT OUTER JOIN items           AS item ON item.id = oi.item_id ");
 		sql.append("LEFT OUTER JOIN order_toppings  AS ot ON oi.id = ot.order_item_id ");
 		sql.append("LEFT OUTER JOIN toppings        AS top ON top.id = ot.topping_id ");
-		sql.append("WHERE o.user_id=:user_id AND o.status=0 ORDER BY o.id DESC, oi.id ASC, ot.id ASC");
-		SqlParameterSource param = new MapSqlParameterSource().addValue("user_id", userId);
-		Order order = template.query(sql.toString(), param, ORDER_EXTRACTOR).get(0);
-		return order;
+		sql.append("WHERE o.user_id=:userId AND o.status=:status ORDER BY o.id DESC, oi.id ASC, ot.id ASC");
+		SqlParameterSource param = new MapSqlParameterSource().addValue("userId", userId).addValue("status", status);
+		List<Order> orderList;
+		try {
+			orderList = template.query(sql.toString(), param, ORDER_EXTRACTOR);
+		} catch (NullPointerException e) {
+			LOGGER.info("注文情報が存在しませんでした");
+			orderList = null;
+		}
+		return orderList;
 	}
+	
+
 
 	/**
 	 * 注文情報のユーザーIDを仮IDから本IDに更新するメソッド. 利用されるクラス:LoginService
@@ -263,7 +254,8 @@ public class OrderRepository {
 	}
 
 	/**
-	 * 受け取った注文情報を基にordersテーブルの注文情報を更新するメソッド. 利用されるクラス:ReceiveOrderService
+	 * 受け取った注文情報を基にordersテーブルの注文情報を更新するメソッド. 
+	 * 利用されるクラス:ReceiveOrderService
 	 * 
 	 * @param order 注文情報
 	 */
@@ -278,13 +270,14 @@ public class OrderRepository {
 	}
 
 	/**
-	 * ユーザーIDで注文情報を削除するメソッド. 利用されるクラス:LoginService
-	 * 
-	 * @param userId ユーザーID
+	 * 注文IDで注文情報を削除するメソッド. 
+	 * 利用されるクラス:LoginService
+	 * @param id 注文ID
 	 */
-	public void deleteByUserId(Integer userId) {
-		String sql = "DELETE FROM orders WHERE user_id = :userId";
-		SqlParameterSource param = new MapSqlParameterSource().addValue("userId", userId);
+	public void deleteById(Integer id) {
+		String sql = "DELETE FROM orders WHERE id=:id";
+		SqlParameterSource param = new MapSqlParameterSource().addValue("id", id);
 		template.update(sql, param);
+		LOGGER.info("注文ID:" + id +"の注文情報を削除しました");
 	}
 }

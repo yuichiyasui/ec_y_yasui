@@ -1,18 +1,37 @@
 # localhostのpostgres接続情報
-#spring:
-#  datasource:
-#    driverClassName: org.postgresql.Driver
-#    url: jdbc:postgresql://localhost:5432/ec_y_yasui
-#    username: postgres
-#    password: postgres
-#    
-# Herokuのpostgres接続情報(検証済み)
 spring:
   datasource:
-    driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://ec2-18-210-51-239.compute-1.amazonaws.com:5432/dauhiubb2sphj?sslmode=require
-    username: nlacxersykriau
-    password: 4e533dc166cff298a0c755fc7c1aef7a244b1204082845ca16b280e5fc7216d5
+    driverClassName: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/ec_y_yasui
+    username: postgres
+    password: postgres
     
+#    
+# Herokuのpostgres接続情報(検証済み)
+#spring:
+#  datasource:
+#    driver-class-name: org.postgresql.Driver
+#    url: jdbc:postgresql://ec2-18-210-51-239.compute-1.amazonaws.com:5432/dauhiubb2sphj?sslmode=require
+#    username: nlacxersykriau
+#    password: 4e533dc166cff298a0c755fc7c1aef7a244b1204082845ca16b280e5fc7216d5
+
+  # メール送信の設定
+  mail:
+   host: smtp.gmail.com
+   port: 587
+   username: yyyyyy.yuichi@gmail.com
+   password: qpqcptiairoyeiit
+   properties.mail.smtp.auth: true
+   properties.mail.smtp.starttls.enable: true
+   
+# 環境変数
+environments:
+  url: http://localhost:8080
+  #url: https://ramen-d.herokuapp.com
+  mail: yyyyyy.yuichi@gmail.com
+
+#  社内サーバーデプロイ用
 #  jmx:
 #   enabled: false
+
+

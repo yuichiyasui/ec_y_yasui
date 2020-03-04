@@ -90,9 +90,9 @@ public class OrderItemRepository {
 	 * @param preOrderId ログイン前に発行した注文ID
 	 */
 	public void updateOrderItemId(Integer orderId, Integer preOrderId) {
-		String sql = "UPDATE order_items SET order_id = :order_Id WHERE order_id = :pre_order_id";
+		String sql = "UPDATE order_items SET order_id = :orderId WHERE order_id = :preOrderId";
 		SqlParameterSource param = new MapSqlParameterSource()
-				.addValue("order_Id", orderId).addValue("pre_order_id",preOrderId);
+				.addValue("orderId", orderId).addValue("preOrderId",preOrderId);
 		template.update(sql, param);
 	}
 

@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ja" xmlns:th="http://thymeleaf.org"
 	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
@@ -44,20 +43,15 @@
 							</div>
 							<div>ログイン中</div>
 						</div>
-						<a class="dropdown-item" th:href="@{/showOrderHistory}"><i
-							class="fa fa-history text-dark"></i> 注文履歴</a> <a
-							class="dropdown-item" th:href="@{/config}"><i
-							class="fa fa-cog text-dark"></i> 設定</a> <a class="dropdown-item"
-							th:href="@{/logout}"><i class="fa fa-sign-out text-dark"></i>
-							ログアウト</a>
+						<a class="dropdown-item" th:href="@{/showOrderHistory}">注文履歴</a> <a
+							class="dropdown-item" th:href="@{/config}">設定</a> <a
+							class="dropdown-item" th:href="@{/logout}">ログアウト</a>
 					</div> <!-- ./dropdown-menu -->
 				</li>
 				<li class="nav-item"><a th:href="@{/showCartList}"
-					class="nav-link text-white">ショッピングカート <i
-						class="fa fa-shopping-cart fa-lg"></i></a></li>
+					class="nav-link text-white">ショッピングカート</a></li>
 				<li class="nav-item" sec:authorize="hasRole('USER') == false">
-					<a th:href="@{/showLogin}" class="nav-link text-white">ログイン <i
-						class="fa fa-sign-in fa-lg"></i></a>
+					<a th:href="@{/showLogin}" class="nav-link text-white">ログイン</a>
 				</li>
 			</ul>
 		</div>
@@ -65,23 +59,19 @@
 
 	<div class="container my-5">
 		<div class="row justify-content-sm-center">
-			<div class="card col-sm-10 shadow-sm border-0">
+			<div class="card col-sm-8 shadow-sm border-0">
 				<div class="card-body text-center">
-					<h3 class="mt-2 mb-4">決済が完了しました！</h3>
-					<i class="fa fa-envelope-o fa-5x" style="color: #993300;"></i>
+					<h3 class="mt-2 mb-4">本人確認のメールを送信しました</h3>
+					<i class="fa fa-envelope-o fa-5x" style="color: #993300;"></i>		
 					<p class="my-4">
-						この度はご注文ありがとうございます。<br>
-						注文内容の確認は注文完了のメールをお送りいたしましたのでそちらよりご確認ください。<br>
-						もしメールが届かない場合は「注文履歴」からご確認ください。
+						まだユーザー登録は完了していません。<br> ご入力いただいたメールアドレスに本人確認のメールを送信しましたので、<br>
+						メール内のURLにアクセスして、ユーザー登録を完了させてください。
 					</p>
-					<a th:href="@{/}">
-						<button class="btn btn-info" type="button">トップ画面を表示する</button>
-					</a>
 				</div>
 			</div>
 		</div>
 	</div>
-	<!-- end container -->
+
 	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
 		integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
 		crossorigin="anonymous"></script>
@@ -93,5 +83,6 @@
 		src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
 		integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
 		crossorigin="anonymous"></script>
+
 </body>
 </html>

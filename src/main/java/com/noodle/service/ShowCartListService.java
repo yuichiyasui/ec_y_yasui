@@ -20,11 +20,11 @@ public class ShowCartListService {
 	private OrderRepository orderRepository;
 	
 	/**
-	 * 注文情報を取得するメソッド.
+	 * ステータス0(注文前)の注文情報を取得するメソッド.
 	 * @param userId ユーザーID
 	 * @return 注文情報
 	 */
 	public Order showCartList(Integer userId) {
-		return orderRepository.findOrderByUserIdAndStatus(userId);
+		return orderRepository.findOrderByUserIdAndStatus(userId, 0).get(0);
 	}
 }

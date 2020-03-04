@@ -14,7 +14,7 @@ public class Order {
 	private Integer id;
 	/**	ユーザーID */
 	private Integer userId;
-	/**	注文ステータス */
+	/**	注文ステータス(0:注文前 1:未入金 2:入金済 3:発送済 9:キャンセル) */
 	private Integer status;
 	/**	合計金額 */
 	private Integer totalPrice;
@@ -32,7 +32,7 @@ public class Order {
 	private String destinationTel;
 	/**	配達日時 */
 	private Timestamp deliveryTime;
-	/**	決済方法(数字) */
+	/**	決済方法(1:代金引換 2:クレジットカード) */
 	private Integer paymentMethod;
 	/**	ユーザー情報 */
 	private User user;
@@ -49,14 +49,19 @@ public class Order {
 	}
 	/**
 	 * 合計金額を計算するメソッド.
-	 * @return 合計金額
+	 * @return 合計金額(税抜)
 	 */
 	public int getCalcTotalPrice() {
 		totalPrice = 0;
-		for(OrderItem orderItem : getOrderItemList()) {	
-			totalPrice += orderItem.getSubTotal();
+		try {
+			for(OrderItem orderItem : getOrderItemList()) {	
+				totalPrice += orderItem.getSubTotal();
+			}			
+			return totalPrice;
+		}catch (Exception e) {
+			e.printStackTrace();
+			return totalPrice;
 		}
-		return totalPrice;
 	}	
 	public Integer getId() {
 		return id;
